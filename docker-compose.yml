@@ -1,0 +1,23 @@
+# zero-cache is not containerized here: there's no confirmed official Docker
+# image tag to pin, so run it locally via `pnpm dev:zero-cache` (npx zero-cache-dev)
+# against this Postgres instance instead.
+services:
+  postgres:
+    image: postgres:16
+    command: ["postgres", "-c", "wal_level=logical"]
+    environment:
+      POSTGRES_USER: kenku
+      POSTGRES_PASSWORD: kenku
+      POSTGRES_DB: kenku
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kenku"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

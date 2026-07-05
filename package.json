@@ -1,0 +1,31 @@
+{
+  "name": "kenku-games",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.10.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:zero-cache": "dotenv -e .env -- npx zero-cache-dev",
+    "build": "turbo run build",
+    "lint": "eslint .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "dotenv-cli": "11.0.0",
+    "eslint": "10.6.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.3",
+    "prettier": "3.9.4",
+    "turbo": "2.10.3",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.62.1"
+  }
+}
