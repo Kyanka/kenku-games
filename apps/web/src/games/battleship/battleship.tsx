@@ -30,59 +30,60 @@ export function Battleship() {
 
   return (
     <>
-      {/* Attack */}
-      <div className="flex flex-row gap-5 justify-center">
-        <div className="flex flex-row">
-          <p>Attack</p>
-          {attackSheet.map((row, rowIndex) => (
-            <div className="flex flex-col">
-              {row.map((marked, colIndex) => (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  disabled={isDefenseBoardDisabled || marked}
-                  className={`w-8 h-8 border border-gray-500 ${getAttackCellColor(marked, rowIndex, colIndex)}`}
-                  onClick={() => {
-                    setAttackSheet((prev) =>
-                      prev.map((row, r) =>
-                        row.map((cell, c) => (r === rowIndex && c === colIndex ? !cell : cell)),
-                      ),
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* Deffence */}
-        <div className="flex flex-row">
-          <p>Deffence</p>
-          {defenseSheet.map((row, rowIndex) => (
-            <div className="flex flex-col">
-              {row.map((marked, colIndex) => (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  disabled={!isDefenseBoardDisabled || marked}
-                  className={`w-8 h-8 border border-gray-500 ${getDefenseCellColor(marked, rowIndex, colIndex)}`}
-                  onClick={() => {
-                    setDefenseSheet((prev) =>
-                      prev.map((row, r) =>
-                        row.map((cell, c) => (r === rowIndex && c === colIndex ? !cell : cell)),
-                      ),
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-        <button
-          className="border pointer bg-amber-300"
-          onClick={() => setIsDefenseBoardDisabled(false)}
-        >
-          STOP
-        </button>
+      {/* <div className="flex flex-row gap-5 justify-center"> */}
+      {/* Deffence */}
+      {/* <p>Deffence</p> */}
+      <div className="flex flex-row shadow-[8px_8px_20px_#3b86ba]">
+        {defenseSheet.map((row, rowIndex) => (
+          <div className="flex flex-col">
+            {row.map((marked, colIndex) => (
+              <button
+                key={`${rowIndex}-${colIndex}`}
+                disabled={!isDefenseBoardDisabled || marked}
+                className={`w-8 h-8 border border-gray-500 ${getDefenseCellColor(marked, rowIndex, colIndex)}`}
+                onClick={() => {
+                  setDefenseSheet((prev) =>
+                    prev.map((row, r) =>
+                      row.map((cell, c) => (r === rowIndex && c === colIndex ? !cell : cell)),
+                    ),
+                  );
+                }}
+              />
+            ))}
+          </div>
+        ))}
       </div>
+
+      {/* Attack */}
+      {/* <p>Attack</p> */}
+      <div className="flex flex-row shadow-[8px_8px_20px_#3b86ba]">
+        {attackSheet.map((row, rowIndex) => (
+          <div className="flex flex-col">
+            {row.map((marked, colIndex) => (
+              <button
+                key={`${rowIndex}-${colIndex}`}
+                disabled={isDefenseBoardDisabled || marked}
+                className={`w-8 h-8 border border-gray-500 ${getAttackCellColor(marked, rowIndex, colIndex)}`}
+                onClick={() => {
+                  setAttackSheet((prev) =>
+                    prev.map((row, r) =>
+                      row.map((cell, c) => (r === rowIndex && c === colIndex ? !cell : cell)),
+                    ),
+                  );
+                }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <button
+        className="border pointer bg-amber-300"
+        onClick={() => setIsDefenseBoardDisabled(false)}
+      >
+        STOP
+      </button>
+      {/* </div> */}
     </>
   );
 }
