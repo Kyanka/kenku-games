@@ -1,15 +1,19 @@
 import { Battleship } from "./battleship";
 import seaSurface from "./data/sea_surface2.png";
+import { useNavigate } from "react-router-dom";
 
 export function BattleshipPage() {
   const USER_NAME = "PLAYER";
   const OPPONENT_NAME = "OPPONENT";
+  const navigate = useNavigate();
   return (
     <>
-      <div className="fixed top-0 h-screen bg-[#000a3c] w-[15%]">
+      <div className="fixed top-0 h-screen  w-[15%]">
+        {/* bg-[#000a3c] */}
         <button
           className="bg-[#001478] px-9 py-4 m-5 rounded-3xl
           text-white text-lg"
+          onClick={() => navigate("/")}
         >
           Main menu
         </button>
@@ -31,9 +35,7 @@ export function BattleshipPage() {
           </div>
 
           <div className="p-10">
-            <div className="flex flex-row gap-5">
-              <Battleship />
-            </div>
+            <Battleship />
           </div>
         </div>
       </div>
