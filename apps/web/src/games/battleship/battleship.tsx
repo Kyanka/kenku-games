@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type Ship = [id: number, cells: [], health: number];
+type Ship = { size: number; count: number };
 type UserErrors = "undefined" | "ship playcment" | "ship in dock";
 
 export function Battleship() {
@@ -9,12 +9,12 @@ export function Battleship() {
   const [currentShip, setCurrentShip] = useState<number>(0);
   const [isHorisontal, setIsHorisontal] = useState(true);
   const [userError, setUserError] = useState<UserErrors>("undefined");
-  const ships = [
+  const [shipsPool, setShipsPool] = useState<Ship[]>([
     { size: 4, count: 1 },
     { size: 3, count: 2 },
     { size: 2, count: 3 },
     { size: 1, count: 4 },
-  ];
+  ]);
 
   const [attackSheet, setAttackSheet] = useState(
     Array.from({ length: 10 }, () => Array(10).fill(false)),
@@ -68,8 +68,10 @@ export function Battleship() {
   function positionShip(rowIndex: number, colIndex: number) {
     const newBoard = defenseSheet.map((row) => [...row]);
 
-    const startRow = isHorisontal ? Math.min(rowIndex, 10 - currentShip) : rowIndex;
-    const startCol = isHorisontal ? colIndex : Math.min(colIndex, 10 - currentShip);
+    // const startRow = isHorisontal ? Math.min(rowIndex, 10 - currentShip) : rowIndex;
+    // const startCol = isHorisontal ? colIndex : Math.min(colIndex, 10 - currentShip);
+    const startRow = isHorisontal ? rowIndex : Math.min(rowIndex, 10 - currentShip);
+    const startCol = isHorisontal ? Math.min(colIndex, 10 - currentShip) : colIndex;
 
     console.log({
       startRow,
@@ -90,10 +92,67 @@ export function Battleship() {
       newBoard[r]![c] = true;
     }
 
+    setShipsPool((prev) =>
+      prev.map((ship) => (ship.size === currentShip ? { ...ship, count: ship.count - 1 } : ship)),
+    );
+
     setDefenseSheet(newBoard);
     setCurrentShip(0);
     setUserError("undefined");
     console.log(defenseSheet);
+  }
+
+  function FindShip(rowIndex: number, colIndex: number) {
+    const visited = new Set<string>();
+    const ship: [number, number][] = [];
+
+    function dfs(row: number, col: number) {
+      if (row < 0 || row > 10 || col < 0 || col > 10) {
+        return;
+      }
+
+      const key = `${row} - ${col}`;
+
+      if (visited.has(key)) {
+        return;
+      }
+
+      visited.add(key);
+
+      if (!defenseSheet[row]?.[col]) {
+        return;
+      }
+
+      ship.push([row, col]);
+
+      dfs(row - 1, col);
+      dfs(row + 1, col);
+      dfs(row, col - 1);
+      dfs(row, col + 1);
+    }
+
+    dfs(rowIndex, colIndex);
+
+    console.log(ship);
+
+    return ship;
+  }
+
+  function CancelShipPlacment(rowIndex: number, colIndex: number) {
+    const ship = FindShip(rowIndex, colIndex);
+    const newBoard = defenseSheet.map((row) => [...row]);
+    const shipSize = ship.length;
+
+    ship.forEach(([row, col]) => {
+      newBoard[row]![col] = false;
+    });
+
+    setShipsPool((prev) =>
+      prev.map((ship) => (ship.size === shipSize ? { ...ship, count: ship.count + 1 } : ship)),
+    );
+
+    setDefenseSheet(newBoard);
+    return;
   }
 
   return (
@@ -112,6 +171,10 @@ export function Battleship() {
                   className={`w-8 h-8 border border-gray-500 ${getDefenseCellColor(isMarked, rowIndex, colIndex)}`}
                   onClick={() => {
                     positionShip(rowIndex, colIndex);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    CancelShipPlacment(rowIndex, colIndex);
                   }}
                 />
               ))}
@@ -157,7 +220,7 @@ export function Battleship() {
           You can't place ships in adjacent cells!
         </p>
         <div className="grid grid-cols-2 gap-2">
-          {ships.map(({ size, count }) => (
+          {shipsPool.map(({ size, count }) => (
             <div key={size}>
               {Array.from({ length: count }).map((_, index) => (
                 <button
