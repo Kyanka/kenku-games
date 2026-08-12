@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { cancelShipPlacment, positionShip } from "./shipsPlacment";
+import type { Ship, UserErrors } from "./data/types";
 
-type Ship = { size: number; count: number };
-type UserErrors = "undefined" | "ship playcment" | "ship in dock";
+// type Ship = { size: number; count: number };
+// type UserErrors = "undefined" | "ship playcment" | "ship in dock";
 
 export function Battleship() {
-  const [isDefenseBoardDisabled, setIsDefenseBoardDisabled] = useState(true);
+  const [isDefenseBoardDisabled, setIsDefenseBoardDisabled] = useState(false);
 
   const [currentShip, setCurrentShip] = useState<number>(0);
   const [isHorisontal, setIsHorisontal] = useState(true);
@@ -22,8 +24,12 @@ export function Battleship() {
   const [defenseSheet, setDefenseSheet] = useState(
     Array.from({ length: 10 }, () => Array(10).fill(false)),
   );
-  // attackSheet[row][col]
-  //   console.log(attackSheet);
+
+  const errorMessages: Record<UserErrors, string> = {
+    undefined: "",
+    "ship playcment": "You can't place ships in adjacent cells!",
+    "ship in dock": "You have to place all ships!",
+  };
 
   function getAttackCellColor(isMarked: boolean, rowIndex: number, colIndex: number) {
     if (!isMarked) return "bg-white";
@@ -39,122 +45,6 @@ export function Battleship() {
     if (!isMarked) return "bg-white";
   }
 
-  function canPlaceShip(rowIndex: number, colIndex: number) {
-    const rowStart = Math.max(0, rowIndex - 1);
-    const rowEnd = isHorisontal ? Math.min(9, rowIndex + 1) : Math.min(9, rowIndex + currentShip);
-    // rowEnd = false ? min(9, 7+2) : (9, 7+1)
-
-    const colStart = Math.max(0, colIndex - 1);
-    const colEnd = isHorisontal ? Math.min(9, colIndex + currentShip) : Math.min(9, colIndex + 1);
-    // colEnd = false ? min(9, 2 + 1) : man(9, 2 + 2)
-
-    console.log({
-      rowStart,
-      rowEnd,
-      colStart,
-      colEnd,
-    });
-
-    for (let row = rowStart; row <= rowEnd; row++) {
-      for (let col = colStart; col <= colEnd; col++) {
-        if (defenseSheet[row]?.[col]) {
-          console.log("Знайшов корабель:", row, col);
-          return true;
-        }
-      }
-    }
-  }
-
-  function positionShip(rowIndex: number, colIndex: number) {
-    const newBoard = defenseSheet.map((row) => [...row]);
-
-    // const startRow = isHorisontal ? Math.min(rowIndex, 10 - currentShip) : rowIndex;
-    // const startCol = isHorisontal ? colIndex : Math.min(colIndex, 10 - currentShip);
-    const startRow = isHorisontal ? rowIndex : Math.min(rowIndex, 10 - currentShip);
-    const startCol = isHorisontal ? Math.min(colIndex, 10 - currentShip) : colIndex;
-
-    console.log({
-      startRow,
-      startCol,
-      currentShip,
-      isHorisontal,
-    });
-
-    if (canPlaceShip(startRow, startCol)) {
-      setUserError("ship playcment");
-      return;
-    }
-
-    for (let i = 0; i < currentShip; i++) {
-      const r = isHorisontal ? startRow : startRow + i;
-      const c = isHorisontal ? startCol + i : startCol;
-
-      newBoard[r]![c] = true;
-    }
-
-    setShipsPool((prev) =>
-      prev.map((ship) => (ship.size === currentShip ? { ...ship, count: ship.count - 1 } : ship)),
-    );
-
-    setDefenseSheet(newBoard);
-    setCurrentShip(0);
-    setUserError("undefined");
-    console.log(defenseSheet);
-  }
-
-  function FindShip(rowIndex: number, colIndex: number) {
-    const visited = new Set<string>();
-    const ship: [number, number][] = [];
-
-    function dfs(row: number, col: number) {
-      if (row < 0 || row > 10 || col < 0 || col > 10) {
-        return;
-      }
-
-      const key = `${row} - ${col}`;
-
-      if (visited.has(key)) {
-        return;
-      }
-
-      visited.add(key);
-
-      if (!defenseSheet[row]?.[col]) {
-        return;
-      }
-
-      ship.push([row, col]);
-
-      dfs(row - 1, col);
-      dfs(row + 1, col);
-      dfs(row, col - 1);
-      dfs(row, col + 1);
-    }
-
-    dfs(rowIndex, colIndex);
-
-    console.log(ship);
-
-    return ship;
-  }
-
-  function CancelShipPlacment(rowIndex: number, colIndex: number) {
-    const ship = FindShip(rowIndex, colIndex);
-    const newBoard = defenseSheet.map((row) => [...row]);
-    const shipSize = ship.length;
-
-    ship.forEach(([row, col]) => {
-      newBoard[row]![col] = false;
-    });
-
-    setShipsPool((prev) =>
-      prev.map((ship) => (ship.size === shipSize ? { ...ship, count: ship.count + 1 } : ship)),
-    );
-
-    setDefenseSheet(newBoard);
-    return;
-  }
-
   return (
     <>
       <div className="flex flex-row gap-5">
@@ -167,14 +57,33 @@ export function Battleship() {
               {row.map((isMarked, colIndex) => (
                 <button
                   key={`${rowIndex}-${colIndex}`}
-                  disabled={!isDefenseBoardDisabled || isMarked}
+                  disabled={isDefenseBoardDisabled || isMarked}
                   className={`w-8 h-8 border border-gray-500 ${getDefenseCellColor(isMarked, rowIndex, colIndex)}`}
                   onClick={() => {
-                    positionShip(rowIndex, colIndex);
+                    positionShip(
+                      rowIndex,
+                      colIndex,
+                      isHorisontal,
+                      defenseSheet,
+                      currentShip,
+                      setUserError,
+                      setShipsPool,
+                      setDefenseSheet,
+                      setCurrentShip,
+                    );
                   }}
                   onContextMenu={(e) => {
                     e.preventDefault();
-                    CancelShipPlacment(rowIndex, colIndex);
+
+                    if (isDefenseBoardDisabled) return;
+
+                    cancelShipPlacment(
+                      rowIndex,
+                      colIndex,
+                      defenseSheet,
+                      setShipsPool,
+                      setDefenseSheet,
+                    );
                   }}
                 />
               ))}
@@ -190,7 +99,7 @@ export function Battleship() {
               {row.map((isMarked, colIndex) => (
                 <button
                   key={`${rowIndex}-${colIndex}`}
-                  disabled={isDefenseBoardDisabled || isMarked}
+                  disabled={!isDefenseBoardDisabled || isMarked}
                   className={`w-8 h-8 border border-gray-500 ${getAttackCellColor(isMarked, rowIndex, colIndex)}`}
                   onClick={() => {
                     setAttackSheet((prev) =>
@@ -207,17 +116,23 @@ export function Battleship() {
 
         <button
           className="border pointer bg-amber-300"
-          onClick={() => setIsDefenseBoardDisabled(false)}
+          onClick={() => {
+            if (shipsPool.some((ship) => ship.count !== 0)) {
+              setUserError("ship in dock");
+              return;
+            }
+            setIsDefenseBoardDisabled(true);
+          }}
         >
-          STOP
+          START
         </button>
         {/* </div> */}
       </div>
       {/* Ship Dock */}
       <div className="flex flex-col">
         <p>Ship Dock</p>
-        <p className={`text-red-600 ${userError == "ship playcment" ? "block" : "hidden"}`}>
-          You can't place ships in adjacent cells!
+        <p className={`text-red-600 ${userError == "undefined" ? "hidden" : "block"}`}>
+          {errorMessages[userError]}
         </p>
         <div className="grid grid-cols-2 gap-2">
           {shipsPool.map(({ size, count }) => (
