@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { cancelShipPlacment, positionShip } from "./shipsPlacment";
-import type { Ship, UserErrors } from "./data/types";
+import { cancelShipPlacment, findAllShips, positionShip } from "./shipsPlacment";
+import type { Ship, ShipState, UserErrors } from "./data/types";
 
 // type Ship = { size: number; count: number };
 // type UserErrors = "undefined" | "ship playcment" | "ship in dock";
@@ -11,12 +11,14 @@ export function Battleship() {
   const [currentShip, setCurrentShip] = useState<number>(0);
   const [isHorisontal, setIsHorisontal] = useState(true);
   const [userError, setUserError] = useState<UserErrors>("undefined");
+  const [shipsCounter, setShipsCounter] = useState<number>(10);
   const [shipsPool, setShipsPool] = useState<Ship[]>([
     { size: 4, count: 1 },
     { size: 3, count: 2 },
     { size: 2, count: 3 },
     { size: 1, count: 4 },
   ]);
+  const [shipsState, setShipsState] = useState<ShipState[]>([]);
 
   const [attackSheet, setAttackSheet] = useState(
     Array.from({ length: 10 }, () => Array(10).fill(false)),
@@ -107,6 +109,19 @@ export function Battleship() {
                         row.map((cell, c) => (r === rowIndex && c === colIndex ? !cell : cell)),
                       ),
                     );
+                    if (defenseSheet[rowIndex]?.[colIndex]) {
+                      shipsState.find((ship) => {
+                        if (
+                          ship.cells.some((cell) => cell.row == rowIndex && cell.col == colIndex)
+                        ) {
+                          ship.hits.push({ row: rowIndex, col: colIndex });
+                        }
+
+                        if (ship.cells.length == ship.hits.length) {
+                          setShipsCounter(shipsCounter - 1);
+                        }
+                      });
+                    }
                   }}
                 />
               ))}
@@ -121,7 +136,9 @@ export function Battleship() {
               setUserError("ship in dock");
               return;
             }
+            setShipsState(findAllShips(defenseSheet));
             setIsDefenseBoardDisabled(true);
+            console.log(shipsState);
           }}
         >
           START

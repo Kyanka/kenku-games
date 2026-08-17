@@ -1,4 +1,4 @@
-import type { Ship, UserErrors } from "./data/types";
+import type { Position, Ship, ShipState, UserErrors } from "./data/types";
 
 function canPlaceShip(
   rowIndex: number,
@@ -62,7 +62,7 @@ export function positionShip(
 
 export function findShip(rowIndex: number, colIndex: number, defenseSheet: boolean[][]) {
   const visited = new Set<string>();
-  const ship: [number, number][] = [];
+  const ship: Position[] = [];
 
   function dfs(row: number, col: number) {
     if (row < 0 || row > 10 || col < 0 || col > 10) {
@@ -81,7 +81,7 @@ export function findShip(rowIndex: number, colIndex: number, defenseSheet: boole
       return;
     }
 
-    ship.push([row, col]);
+    ship.push({ row, col });
 
     dfs(row - 1, col);
     dfs(row + 1, col);
@@ -107,7 +107,7 @@ export function cancelShipPlacment(
   const newBoard = defenseSheet.map((row) => [...row]);
   const shipSize = ship.length;
 
-  ship.forEach(([row, col]) => {
+  ship.forEach(({ row, col }) => {
     newBoard[row]![col] = false;
   });
 
@@ -117,4 +117,50 @@ export function cancelShipPlacment(
 
   setDefenseSheet(newBoard);
   return;
+}
+
+export function findAllShips(defenseSheet: boolean[][]) {
+  const visited = new Set<string>();
+  const ships: ShipState[] = [];
+
+  function dfs(row: number, col: number, ship: Position[]) {
+    if (row < 0 || row >= 10 || col < 0 || col >= 10) {
+      return;
+    }
+
+    const key = `${row} - ${col}`;
+
+    if (visited.has(key)) {
+      return;
+    }
+
+    visited.add(key);
+
+    if (!defenseSheet[row]?.[col]) {
+      return;
+    }
+
+    ship.push({ row, col });
+
+    dfs(row - 1, col, ship);
+    dfs(row + 1, col, ship);
+    dfs(row, col - 1, ship);
+    dfs(row, col + 1, ship);
+  }
+
+  for (let row = 0; row < 10; row++) {
+    for (let col = 0; col < 10; col++) {
+      if (defenseSheet[row]?.[col] && !visited.has(`${row}-${col}`)) {
+        const cells: Position[] = [];
+
+        dfs(row, col, cells);
+
+        if (cells.length > 0) {
+          ships.push({ id: ships.length + 1, cells, hits: [] });
+        }
+      }
+    }
+  }
+
+  return ships;
 }
