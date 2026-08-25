@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Position, ShipState } from "../data/types";
+import { MISS, SHOT_SHIP } from "../data/visualSettings";
 
 type AttackSheetProps = {
   attackSheet: boolean[][];
@@ -23,6 +24,7 @@ export function AttackSheet({
     if (!isMarked) return "bg-white";
 
     return defenseSheet[rowIndex]?.[colIndex] ? "bg-amber-300" : "bg-blue-500";
+    // return defenseSheet[rowIndex]?.[colIndex] ? `bg-[${SHOT_SHIP}]` : `bg-[${MISS}]`;
   }
 
   function colourSurroundingCells(cells: Position[]) {

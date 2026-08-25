@@ -1,4 +1,4 @@
-import { Battleship } from "./components/battleship";
+import { Battleship } from "./components/!battleship";
 import seaSurface from "./data/sea_surface2.png";
 import { useNavigate } from "react-router-dom";
 
