@@ -1,4 +1,4 @@
-import type { Position, Ship, UserErrors } from "./data/types";
+import type { Position, Ship, UserErrors } from "../data/types";
 
 type DefenseBoardProps = {
   defenseSheet: boolean[][];
