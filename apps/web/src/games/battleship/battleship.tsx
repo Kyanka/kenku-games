@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { cancelShipPlacment, findAllShips, positionShip } from "./shipsPlacment";
-import type { Ship, ShipState, UserErrors } from "./data/types";
+import { useEffect, useState } from "react";
+import type { Position, Ship, ShipState, UserErrors } from "./data/types";
+import { DefenceSheet } from "./defenceSheet";
 
 // type Ship = { size: number; count: number };
 // type UserErrors = "undefined" | "ship playcment" | "ship in dock";
@@ -11,7 +11,7 @@ export function Battleship() {
   const [currentShip, setCurrentShip] = useState<number>(0);
   const [isHorisontal, setIsHorisontal] = useState(true);
   const [userError, setUserError] = useState<UserErrors>("undefined");
-  const [shipsCounter, setShipsCounter] = useState<number>(10);
+  const [opponentShipCounter, setOpponentShipCounter] = useState<number>(10);
   const [shipsPool, setShipsPool] = useState<Ship[]>([
     { size: 4, count: 1 },
     { size: 3, count: 2 },
@@ -39,13 +39,82 @@ export function Battleship() {
     return defenseSheet[rowIndex]?.[colIndex] ? "bg-amber-300" : "bg-blue-500";
   }
 
-  function getDefenseCellColor(isMarked: boolean, rowIndex: number, colIndex: number) {
-    if (isMarked && attackSheet[rowIndex]?.[colIndex]) return "bg-red-300";
-    if (isMarked) return "bg-green-500";
+  function findAllShips() {
+    const visited = new Set<string>();
+    const ships: ShipState[] = [];
 
-    if (!isMarked && attackSheet[rowIndex]?.[colIndex]) return "bg-blue-500";
-    if (!isMarked) return "bg-white";
+    function dfs(row: number, col: number, ship: Position[]) {
+      if (row < 0 || row >= 10 || col < 0 || col >= 10) {
+        return;
+      }
+
+      const key = `${row} - ${col}`;
+
+      if (visited.has(key)) {
+        return;
+      }
+
+      visited.add(key);
+
+      if (!defenseSheet[row]?.[col]) {
+        return;
+      }
+
+      ship.push({ row, col });
+
+      dfs(row - 1, col, ship);
+      dfs(row + 1, col, ship);
+      dfs(row, col - 1, ship);
+      dfs(row, col + 1, ship);
+    }
+
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (defenseSheet[row]?.[col] && !visited.has(`${row}-${col}`)) {
+          const cells: Position[] = [];
+
+          dfs(row, col, cells);
+
+          if (cells.length > 0) {
+            ships.push({ id: ships.length + 1, cells, hits: [] });
+          }
+        }
+      }
+    }
+
+    return ships;
   }
+
+  function colourSurroundingCells(cells: Position[]) {
+    const startCell = [cells[0]!.row - 1, cells[0]!.col - 1];
+    const lastCell = [cells[cells.length - 1]!.row + 1, cells[cells.length - 1]!.col + 1];
+
+    setAttackSheet((prev) => {
+      const newBoard = prev.map((row) => [...row]);
+
+      for (let x = startCell[0]!; x <= lastCell[0]!; x++) {
+        for (let y = startCell[1]!; y <= lastCell[1]!; y++) {
+          if (cells.some((cell) => cell.row === x && cell.col === y)) {
+            continue;
+          }
+
+          if (x < 0 || x >= 10 || y < 0 || y >= 10) {
+            continue;
+          }
+
+          newBoard[x]![y] = true;
+        }
+      }
+
+      return newBoard;
+    });
+  }
+
+  useEffect(() => {
+    if (opponentShipCounter === 0) {
+      console.log("WIN");
+    }
+  }, [opponentShipCounter]);
 
   return (
     <>
@@ -54,43 +123,17 @@ export function Battleship() {
         {/* Deffence */}
         {/* <p>Deffence</p> */}
         <div className="flex flex-col shadow-[8px_8px_20px_#3b86ba]">
-          {defenseSheet.map((row, rowIndex) => (
-            <div className="flex">
-              {row.map((isMarked, colIndex) => (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  disabled={isDefenseBoardDisabled || isMarked}
-                  className={`w-8 h-8 border border-gray-500 ${getDefenseCellColor(isMarked, rowIndex, colIndex)}`}
-                  onClick={() => {
-                    positionShip(
-                      rowIndex,
-                      colIndex,
-                      isHorisontal,
-                      defenseSheet,
-                      currentShip,
-                      setUserError,
-                      setShipsPool,
-                      setDefenseSheet,
-                      setCurrentShip,
-                    );
-                  }}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-
-                    if (isDefenseBoardDisabled) return;
-
-                    cancelShipPlacment(
-                      rowIndex,
-                      colIndex,
-                      defenseSheet,
-                      setShipsPool,
-                      setDefenseSheet,
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          ))}
+          <DefenceSheet
+            defenseSheet={defenseSheet}
+            attackSheet={attackSheet}
+            isDefenseBoardDisabled={isDefenseBoardDisabled}
+            isHorisontal={isHorisontal}
+            currentShip={currentShip}
+            setUserError={setUserError}
+            setShipsPool={setShipsPool}
+            setDefenseSheet={setDefenseSheet}
+            setCurrentShip={setCurrentShip}
+          />
         </div>
 
         {/* Attack */}
@@ -110,17 +153,17 @@ export function Battleship() {
                       ),
                     );
                     if (defenseSheet[rowIndex]?.[colIndex]) {
-                      shipsState.find((ship) => {
-                        if (
-                          ship.cells.some((cell) => cell.row == rowIndex && cell.col == colIndex)
-                        ) {
-                          ship.hits.push({ row: rowIndex, col: colIndex });
-                        }
+                      const ship = shipsState.find((ship) =>
+                        ship.cells.some((cell) => cell.row === rowIndex && cell.col === colIndex),
+                      );
+                      if (ship) {
+                        ship.hits.push({ row: rowIndex, col: colIndex });
 
-                        if (ship.cells.length == ship.hits.length) {
-                          setShipsCounter(shipsCounter - 1);
+                        if (ship.cells.length === ship.hits.length) {
+                          setOpponentShipCounter((prev) => prev - 1);
+                          colourSurroundingCells(ship.cells);
                         }
-                      });
+                      }
                     }
                   }}
                 />
@@ -136,9 +179,8 @@ export function Battleship() {
               setUserError("ship in dock");
               return;
             }
-            setShipsState(findAllShips(defenseSheet));
+            setShipsState(findAllShips);
             setIsDefenseBoardDisabled(true);
-            console.log(shipsState);
           }}
         >
           START
