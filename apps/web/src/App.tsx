@@ -2,13 +2,39 @@ import { Route, Routes } from "react-router-dom";
 import { GameSelect } from "./routes/GameSelect.js";
 import { BattleshipPlaceholder } from "./routes/BattleshipPlaceholder.js";
 import { DicePlaceholder } from "./routes/DicePlaceholder.js";
+import { Login } from "./routes/(beta)/Login.js";
+import { Signup } from "./routes/(beta)/Signup.js";
+import { AuthGuard } from "./components/AuthGuard.js";
 
 export function App() {
   return (
     <Routes>
-      <Route path="/" element={<GameSelect />} />
-      <Route path="/battleship" element={<BattleshipPlaceholder />} />
-      <Route path="/dice" element={<DicePlaceholder />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/"
+        element={
+          <AuthGuard>
+            <GameSelect />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/battleship"
+        element={
+          <AuthGuard>
+            <BattleshipPlaceholder />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/dice"
+        element={
+          <AuthGuard>
+            <DicePlaceholder />
+          </AuthGuard>
+        }
+      />
     </Routes>
   );
 }

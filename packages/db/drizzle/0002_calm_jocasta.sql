@@ -1,0 +1,1 @@
+ALTER TABLE "profiles" RENAME COLUMN "bio" TO "display_name";

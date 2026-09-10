@@ -2,6 +2,30 @@
 
 Educational project with mini games
 
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Monorepo | pnpm workspaces + Turborepo |
+| Frontend | React + Vite + React Router |
+| Sync | Zero (`@rocicorp/zero`) + zero-cache |
+| Backend | Express (Node.js) |
+| Database | PostgreSQL with `wal_level=logical` |
+| ORM / migrations | Drizzle ORM + drizzle-kit |
+| Game logic | Pure functions + XState |
+| Language | TypeScript (strict) |
+
+## Packages
+
+| Package | Role |
+|---|---|
+| `packages/db` | Drizzle schema, migrations, drizzle.config.ts |
+| `packages/zero-schema` | Zero schema (auto-generated), mutators, queries |
+| `packages/shared-types` | Shared TypeScript types |
+| `packages/game-logic` | Pure game logic, XState machines |
+| `apps/server` | Express + Zero endpoints + DB client |
+| `apps/web` | React frontend + Zero client |
+
 ## Requirements
 
 - Node.js ≥ 22 (`corepack enable` so the right pnpm version gets picked up)
@@ -24,6 +48,16 @@ with the connection string from your provider (usually with
 `?sslmode=require`), and make sure logical replication is enabled on their
 side (enabled by default on Neon). In that case the local
 `docker-compose.yml` simply isn't used.
+
+## Database workflow
+
+Schema lives in `packages/db/src/schema.ts`. After every schema change:
+
+```bash
+pnpm db:sync
+```
+
+This runs in sequence: generate SQL migration → apply to DB → regenerate Zero schema.
 
 ## Running the frontend on its own
 
@@ -66,9 +100,10 @@ pnpm dev                        # web + server via Turborepo
 
 ## Other commands
 
-| Command                        | What it does                       |
-| ------------------------------- | ----------------------------------- |
-| `pnpm typecheck`               | `tsc --noEmit` across all packages  |
-| `pnpm lint`                    | ESLint across the whole repo        |
-| `pnpm test`                    | vitest (`game-logic` only for now)  |
-| `pnpm format` / `format:check` | Prettier                            |
+| Command | What it does |
+|---|---|
+| `pnpm db:sync` | Generate migration + apply + regenerate Zero schema |
+| `pnpm typecheck` | `tsc --noEmit` across all packages |
+| `pnpm lint` | ESLint across the whole repo |
+| `pnpm test` | vitest (`game-logic` only for now) |
+| `pnpm format` / `format:check` | Prettier |

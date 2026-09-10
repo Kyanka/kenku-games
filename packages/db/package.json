@@ -1,0 +1,26 @@
+{
+  "name": "@kenku/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "db:generate": "dotenv -e ../../.env -- drizzle-kit generate",
+    "db:migrate": "dotenv -e ../../.env -- drizzle-kit migrate",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "0.45.2"
+  },
+  "dependencies": {
+    "pg": "8.22.0"
+  },
+  "devDependencies": {
+    "drizzle-orm": "0.45.2",
+    "drizzle-kit": "0.31.10",
+    "dotenv-cli": "11.0.0",
+    "typescript": "6.0.3",
+    "@types/node": "26.1.0"
+  }
+}
