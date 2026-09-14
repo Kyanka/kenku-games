@@ -17,8 +17,8 @@ export function LoginPage () {
 
         
         <div  className='mx-auto max-w-md' >
-        <div className="  p-4">
-            <h1 className="uppercase text-green font-display text-lg "> &gt;User authentication</h1>
+        <div className="mb-10">
+            <h1 className="uppercase text-green font-display text-lg "> &gt; User authentication</h1>
             <p className='text-sm text-grey'>Access your global save progress and arcade rank.</p>
         
         </div>
