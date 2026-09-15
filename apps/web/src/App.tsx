@@ -9,12 +9,9 @@ import { AuthGuard } from "./components/AuthGuard.js";
 import { LoginPage } from "./routes/LoginPage.js";
 import { SignupPage } from "./routes/SignupPage.js";
 
-
-
 export function App() {
   return (
     <Routes>
-
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route
@@ -41,7 +38,6 @@ export function App() {
           </AuthGuard>
         }
       />
-
     </Routes>
   );
 }

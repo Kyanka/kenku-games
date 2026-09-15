@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-
-  --color-*: initial;  
+  --color-*: initial;
   --color-black: #05060d;
-  --color-green: #C6FF4A;
-  --color-grey: #A09DA5;
-  --color-white: #F7F2E8;
-  --color-violet: #A990FF;
-  --color-pink: #FF8EAF;
-  --color-blue: #7AA2F9;
+  --color-green: #c6ff4a;
+  --color-grey: #a09da5;
+  --color-white: #f7f2e8;
+  --color-violet: #a990ff;
+  --color-pink: #ff8eaf;
+  --color-blue: #7aa2f9;
   --font-display: "Press Start 2P", monospace;
   --font-second: "Space Mono", monospace;
-  
+}
+
+body {
+  background-color: var(--color-black);
+  height: 100vh;
 }
