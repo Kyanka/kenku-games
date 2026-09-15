@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { bearer } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db/client.js";
 import { user, session, account, verification, profiles } from "@kenku/db";
@@ -8,7 +9,7 @@ export const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
-
+  plugins: [bearer()],
   // Разрешаем запросы с фронта (локально и прод через env)
   trustedOrigins: [process.env.FRONTEND_URL ?? "http://localhost:5173", "http://localhost:5173"],
 
