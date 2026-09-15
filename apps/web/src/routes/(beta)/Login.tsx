@@ -2,12 +2,17 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signIn } from "../../lib/auth-client.js";
 
+
+
 export function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+ 
+
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

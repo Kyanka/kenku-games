@@ -3,28 +3,33 @@ import logo from '../images/logo.svg';
 import { Github } from '../icons/Github';
 import { Discord } from '../icons/Discord'
 import { Google } from '../icons/Google'
-import { useNavigate, Link, Navigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { signIn } from "../lib/auth-client.js";
 
 
 export function LoginPage () {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsloading] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        setError('');
+        setError(null);
         setIsloading(true);
 
+        const { error } = await signIn.email({ email, password });
 
-        //bla bla bla errors and signin 
-        //что тут будет зависит от типа авторизации
-        navigate('/home')
+        setIsloading(false);
 
+        if (error) {
+            setError(error.message ?? "Login error ");
+            return;
+        }
 
-
+        navigate("/");
+        
     }
 
     return (
@@ -42,19 +47,19 @@ export function LoginPage () {
                 
                 </div>
         
-                <form >
+                <form onSubmit={handleSubmit} >
                     <label className='uppercase text-grey font-display' 
-                    htmlFor="ussername">
-                        &gt; Username: </label>
+                    htmlFor="email">
+                        &gt; Email: </label>
                     
                     <input 
-                        className="block w-full border border-grey py-2 uppercase text-grey" 
+                        className="block w-full border border-grey py-2 placeholder:uppercase text-grey not-placeholder-shown:bg-grey not-placeholder-shown:text-black " 
                         placeholder="&gt; pixel_ " 
-                        id="ussername" 
-                        type="text" 
-                        value={username}
+                        id="email" 
+                        type="email" 
+                        value={email}
                         required
-                        onChange={(e)=> setUsername (e.target.value)}
+                        onChange={(e)=> setEmail (e.target.value)}
                         
                         />
                     
@@ -65,7 +70,7 @@ export function LoginPage () {
                         &gt; Password:</label>
                     
                     <input 
-                        className="block w-full border border-grey py-2 uppercase text-grey " 
+                        className="block w-full border border-grey py-2 placeholder:uppercase text-grey " 
                         placeholder="&gt; enter secure pass" 
                         id="password" 
                         type="password"
@@ -103,8 +108,9 @@ export function LoginPage () {
                         </button>
                     </div>
                 </form> 
-        
-                <div className="flex gap-5">
+
+                {error && <p className="text-sm text-pink rounded-lg px-3 py-2 ">{error}</p>}
+                <div className="flex gap-5 mb-50">
                     <p className='text-pink'>Forgot password</p>
                     <p className='text-violet uppercase'>New player? 
                         <Link to='/signup'>
