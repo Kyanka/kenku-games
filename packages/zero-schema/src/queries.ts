@@ -1,11 +1,3 @@
-import { defineQueries, defineQuery } from "@rocicorp/zero";
-import { z } from "zod";
-import { zql } from "./schema.js";
+import { defineQueries } from "@rocicorp/zero";
 
-export const queries = defineQueries({
-  rooms: {
-    byId: defineQuery(z.string(), ({ args: roomId }) =>
-      zql.room.where("id", roomId).related("players").related("moves").one(),
-    ),
-  },
-});
+export const queries = defineQueries({});

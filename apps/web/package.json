@@ -14,6 +14,7 @@
     "@kenku/shared-types": "workspace:*",
     "@kenku/zero-schema": "workspace:*",
     "@rocicorp/zero": "1.7.0",
+    "better-auth": "^1.7.3",
     "@xstate/react": "6.1.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",

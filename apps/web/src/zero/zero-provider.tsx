@@ -1,19 +1,15 @@
-import { useMemo, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { ZeroProvider } from "@rocicorp/zero/react";
 import { schema, mutators } from "@kenku/zero-schema";
+import { useSession } from "../lib/auth-client.js";
 
-const USER_ID_KEY = "kenku:anonymous-user-id";
-
-function getOrCreateUserId(): string {
-  const existing = localStorage.getItem(USER_ID_KEY);
-  if (existing) return existing;
-  const id = crypto.randomUUID();
-  localStorage.setItem(USER_ID_KEY, id);
-  return id;
-}
+// Гостевой ID для Zero пока пользователь не авторизован.
+// Zero требует непустой userID даже для публичных запросов.
+const GUEST_ID = "guest";
 
 export function KenkuZeroProvider({ children }: { children: ReactNode }) {
-  const userID = useMemo(() => getOrCreateUserId(), []);
+  const { data: session } = useSession();
+  const userID = session?.user.id ?? GUEST_ID;
 
   return (
     <ZeroProvider

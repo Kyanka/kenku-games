@@ -8,5 +8,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,
+    proxy: {
+      // Проксируем /api/* на сервер — фронт и бэк на одном origin, CORS не нужен
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
   },
 });
