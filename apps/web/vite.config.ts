@@ -6,7 +6,6 @@ import { dirname, resolve } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Подтягиваем .env из корня монорепы (там VITE_API_URL)
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   envDir: resolve(__dirname, "../../"),

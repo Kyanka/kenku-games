@@ -1,7 +1,5 @@
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
-// Таблицы генерируются Better Auth — не редактировать вручную.
-// Источник: npx @better-auth/cli generate (для сверки при обновлении BA)
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),

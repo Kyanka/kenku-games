@@ -10,8 +10,6 @@ const app = new Hono();
 
 const FRONTEND_ORIGIN = process.env.FRONTEND_URL ?? "http://localhost:5173";
 
-// Вспомогательная функция: добавляет CORS-заголовки к raw Response от Better Auth.
-// Hono cors() middleware не работает с raw Response, поэтому добавляем вручную.
 function withCors(response: Response, origin: string | null): Response {
   if (!origin || origin !== FRONTEND_ORIGIN) return response;
   const headers = new Headers(response.headers);
@@ -25,7 +23,6 @@ function withCors(response: Response, origin: string | null): Response {
   });
 }
 
-// CORS preflight + все /api/auth/* маршруты
 app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
   const origin = c.req.header("Origin") ?? null;
 
@@ -49,7 +46,6 @@ app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
 
 const pushProcessor = new PushProcessor(dbProvider);
 
-// CORS для Zero-эндпоинтов
 app.use(
   "/api/zero/*",
   cors({

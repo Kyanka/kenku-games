@@ -10,7 +10,6 @@ export const auth = betterAuth({
     schema: { user, session, account, verification },
   }),
   plugins: [bearer()],
-  // Разрешаем запросы с фронта (локально и прод через env)
   trustedOrigins: [process.env.FRONTEND_URL ?? "http://localhost:5173", "http://localhost:5173"],
 
   emailAndPassword: { enabled: true },
@@ -33,7 +32,6 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        // Автоматически создаём публичный профиль при регистрации
         after: async (newUser) => {
           await db.insert(profiles).values({
             id: newUser.id,
