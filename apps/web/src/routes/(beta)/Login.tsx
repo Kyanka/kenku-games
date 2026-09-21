@@ -1,13 +1,18 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { signIn } from "../../lib/auth-client.js";
+import { signIn, useSession } from "../../lib/auth-client.js";
 
 export function Login() {
   const navigate = useNavigate();
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session) navigate("/", { replace: true });
+  }, [session, navigate]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -20,10 +25,7 @@ export function Login() {
 
     if (error) {
       setError(error.message ?? "Ошибка входа");
-      return;
     }
-
-    navigate("/");
   }
 
   return (
