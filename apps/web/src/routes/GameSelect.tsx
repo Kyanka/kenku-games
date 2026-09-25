@@ -24,7 +24,7 @@ export function GameSelect() {
           onClick={handleLogout}
           className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
         >
-          Выйти
+          Sign out
         </button>
       </div>
       {session?.user && (

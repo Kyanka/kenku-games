@@ -24,14 +24,14 @@ export function Login() {
     setLoading(false);
 
     if (error) {
-      setError(error.message ?? "Ошибка входа");
+      setError(error.message ?? "Login failed");
     }
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Вход</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Sign in</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
@@ -51,7 +51,7 @@ export function Login() {
 
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">
-              Пароль
+              Password
             </label>
             <input
               id="password"
@@ -71,14 +71,14 @@ export function Login() {
             disabled={loading}
             className="mt-2 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? "Входим..." : "Войти"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-center text-gray-500">
-          Нет аккаунта?{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-blue-600 hover:underline">
-            Зарегистрироваться
+            Sign up
           </Link>
         </p>
       </div>

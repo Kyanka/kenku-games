@@ -20,7 +20,7 @@ export function Signup() {
     setLoading(false);
 
     if (error) {
-      setError(error.message ?? "Ошибка регистрации");
+      setError(error.message ?? "Sign up failed");
       return;
     }
 
@@ -30,12 +30,12 @@ export function Signup() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Регистрация</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create account</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label htmlFor="name" className="text-sm font-medium text-gray-700">
-              Имя
+              Name
             </label>
             <input
               id="name"
@@ -65,7 +65,7 @@ export function Signup() {
 
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">
-              Пароль
+              Password
             </label>
             <input
               id="password"
@@ -88,14 +88,14 @@ export function Signup() {
             disabled={loading}
             className="mt-2 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? "Создаём аккаунт..." : "Зарегистрироваться"}
+            {loading ? "Creating account..." : "Sign up"}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-center text-gray-500">
-          Уже есть аккаунт?{" "}
+          Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
-            Войти
+            Sign in
           </Link>
         </p>
       </div>
