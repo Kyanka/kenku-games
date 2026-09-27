@@ -3,6 +3,7 @@ import { bearer } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db/client.js";
 import { user, session, account, verification, profiles } from "@kenku/db";
+import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -32,10 +33,25 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        before: async (newUser) => {
+          // newUser.name carries the username chosen at signup (transport mechanism)
+          const username = newUser.name;
+          if (!username) return { data: newUser };
+          const existing = await db.select({ id: profiles.id })
+            .from(profiles)
+            .where(eq(profiles.username, username))
+            .limit(1);
+          if (existing.length > 0) {
+            throw new Error("Username is already taken");
+          }
+          return { data: newUser };
+        },
         after: async (newUser) => {
+          // Use name as username if provided, otherwise fall back to email prefix
+          const username = newUser.name || newUser.email.split("@")[0];
           await db.insert(profiles).values({
             id: newUser.id,
-            username: newUser.name ?? newUser.email.split("@")[0],
+            username,
             avatarUrl: newUser.image ?? null,
           });
         },

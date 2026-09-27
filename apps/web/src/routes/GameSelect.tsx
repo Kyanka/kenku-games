@@ -20,12 +20,20 @@ export function GameSelect() {
     <main className="mx-auto flex max-w-md flex-col gap-4 p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Kenku Games</h1>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/profile")}
+            className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            Profile
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
       {session?.user && (
         <p className="text-sm text-slate-500">{session.user.email}</p>

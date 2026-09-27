@@ -10,16 +10,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@kenku/game-logic": "workspace:*",
     "@kenku/shared-types": "workspace:*",
     "@kenku/zero-schema": "workspace:*",
     "@rocicorp/zero": "1.7.0",
-    "better-auth": "^1.7.3",
     "@xstate/react": "6.1.0",
+    "better-auth": "^1.7.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "react-hook-form": "^7.89.0",
     "react-router-dom": "7.18.1",
-    "xstate": "5.32.4"
+    "xstate": "5.32.4",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.2",

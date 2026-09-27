@@ -1,30 +1,34 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signIn, useSession } from "../../lib/auth-client.js";
+import { LoginSchema, type LoginValues } from "../../lib/schemas.js";
 
 export function Login() {
   const navigate = useNavigate();
   const { data: session } = useSession();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(LoginSchema),
+  });
 
   useEffect(() => {
     if (session) navigate("/", { replace: true });
   }, [session, navigate]);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    const { error } = await signIn.email({ email, password });
-
-    setLoading(false);
-
+  async function onSubmit(values: LoginValues) {
+    const { error } = await signIn.email({
+      email: values.email,
+      password: values.password,
+    });
     if (error) {
-      setError(error.message ?? "Login failed");
+      setError("root", { message: error.message ?? "Login failed" });
     }
   }
 
@@ -33,7 +37,7 @@ export function Login() {
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Sign in</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-sm font-medium text-gray-700">
               Email
@@ -42,11 +46,12 @@ export function Login() {
               id="email"
               type="email"
               autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email")}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.email && (
+              <p className="text-xs text-red-600">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -57,21 +62,26 @@ export function Login() {
               id="password"
               type="password"
               autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register("password")}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.password && (
+              <p className="text-xs text-red-600">{errors.password.message}</p>
+            )}
           </div>
 
-          {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
+          {errors.root && (
+            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+              {errors.root.message}
+            </p>
+          )}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="mt-2 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 

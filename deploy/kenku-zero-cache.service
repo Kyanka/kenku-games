@@ -1,0 +1,21 @@
+[Unit]
+Description=Kenku zero-cache
+After=network.target kenku-server.service
+Requires=kenku-server.service
+
+[Service]
+Type=simple
+User=kenku
+WorkingDirectory=/opt/kenku
+EnvironmentFile=/opt/kenku/.env
+Environment=NODE_ENV=production
+# zero-cache is invoked via npx; pin to the version in the lockfile
+ExecStart=/usr/bin/npx zero-cache
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kenku-zero-cache
+
+[Install]
+WantedBy=multi-user.target

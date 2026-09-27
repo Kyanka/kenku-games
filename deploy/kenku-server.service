@@ -1,0 +1,25 @@
+[Unit]
+Description=Kenku API Server (Hono)
+After=network.target kenku-migrate.service
+Requires=kenku-migrate.service
+
+[Service]
+Type=simple
+User=kenku
+WorkingDirectory=/opt/kenku
+EnvironmentFile=/opt/kenku/.env
+# NODE_ENV=production => pino emits raw JSON, pipe through journalctl or ship to Loki
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node apps/server/dist/index.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kenku-server
+
+# Graceful shutdown: give the process 10 s to finish in-flight requests
+TimeoutStopSec=10
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

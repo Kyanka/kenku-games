@@ -29,6 +29,13 @@
       "when": 1789067196731,
       "tag": "0003_shiny_nocturne",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790516981221,
+      "tag": "0004_warm_frightful_four",
+      "breakpoints": true
     }
   ]
 }
