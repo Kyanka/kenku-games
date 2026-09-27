@@ -9,11 +9,13 @@ export function KenkuZeroProvider({ children }: { children: ReactNode }) {
   // Empty string "" would throw; "guest"/"anon" is deprecated.
   const userID = session?.user.id ?? null;
 
-  // Pass the Better Auth bearer token so zero-cache can forward it to our
-  // query server for userID validation. Re-read on reconnect via function form.
-  // Anonymous users connect with null userID and no auth token.
+  // auth MUST be a string (not a function) — Zero serialises it via JSON.stringify
+  // inside encodeSecProtocols for the Sec-WebSocket-Protocol header. Functions
+  // are silently dropped by JSON.stringify, so a function auth never reaches
+  // zero-cache. Read the token at render time; useSession() re-renders on
+  // login/logout, so the value is always fresh.
   const auth = userID
-    ? () => localStorage.getItem("bearer_token") ?? ""
+    ? (localStorage.getItem("bearer_token") ?? undefined)
     : undefined;
 
   return (
