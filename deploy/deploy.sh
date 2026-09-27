@@ -19,7 +19,7 @@ BRANCH="${1:-main}"
 DEPLOY_DIR="/opt/kenku-games"
 LOG_TAG="kenku-deploy"
 
-log() { echo "[$(date '+%H:%M:%S')] $*" | tee -a /var/log/kenku-deploy.log; }
+log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 log "=== Deploy started (branch: $BRANCH) ==="
 
