@@ -13,7 +13,10 @@ import { logger } from "./logger.js";
 
 const app = new Hono();
 
-const FRONTEND_ORIGIN = process.env.FRONTEND_URL ?? "http://localhost:5173";
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS ?? process.env.FRONTEND_URL ?? "http://localhost:5173")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // ─── HTTP request logging middleware ───────────────────────────────────────
 app.use("*", async (c, next) => {
@@ -28,7 +31,7 @@ app.use("*", async (c, next) => {
 });
 
 function withCors(response: Response, origin: string | null): Response {
-  if (!origin || origin !== FRONTEND_ORIGIN) return response;
+  if (!origin || !ALLOWED_ORIGINS.includes(origin)) return response;
   const headers = new Headers(response.headers);
   headers.set("Access-Control-Allow-Origin", origin);
   headers.set("Access-Control-Allow-Credentials", "true");
@@ -47,7 +50,7 @@ app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
     return new Response(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": FRONTEND_ORIGIN,
+        "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -62,7 +65,7 @@ app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
 
 const pushProcessor = new PushProcessor(dbProvider);
 
-const apiCors = cors({ origin: FRONTEND_ORIGIN, credentials: true });
+const apiCors = cors({ origin: (o) => ALLOWED_ORIGINS.includes(o) ? o : ALLOWED_ORIGINS[0], credentials: true });
 app.use("/api/zero/*", apiCors);
 app.use("/api/check-username", apiCors);
 
