@@ -3,20 +3,18 @@ import { ZeroProvider } from "@rocicorp/zero/react";
 import { schema, mutators } from "@kenku/zero-schema";
 import { useSession } from "../lib/auth-client.js";
 
-const GUEST_ID = "guest";
-
 export function KenkuZeroProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
-  const userID = session?.user.id ?? GUEST_ID;
+  // null = anonymous/logged-out. Zero v1.7+: null/undefined means "not logged in".
+  // Empty string "" would throw; "guest"/"anon" is deprecated.
+  const userID = session?.user.id ?? null;
 
   // Pass the Better Auth bearer token so zero-cache can forward it to our
-  // query server for userID validation. Wrapping in a function lets Zero
-  // re-read the token on reconnection (e.g. after a silent token refresh).
-  // Guests have no token — they connect as GUEST_ID with no auth.
-  const auth =
-    userID === GUEST_ID
-      ? undefined
-      : () => localStorage.getItem("bearer_token") ?? "";
+  // query server for userID validation. Re-read on reconnect via function form.
+  // Anonymous users connect with null userID and no auth token.
+  const auth = userID
+    ? () => localStorage.getItem("bearer_token") ?? ""
+    : undefined;
 
   return (
     <ZeroProvider

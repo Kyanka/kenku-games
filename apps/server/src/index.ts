@@ -13,7 +13,11 @@ import { logger } from "./logger.js";
 
 const app = new Hono();
 
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS ?? process.env.FRONTEND_URL ?? "http://localhost:5173")
+const ALLOWED_ORIGINS = (
+  process.env.CORS_ORIGINS ??
+  process.env.FRONTEND_URL ??
+  "http://localhost:5173"
+)
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
@@ -24,10 +28,16 @@ app.use("*", async (c, next) => {
   await next();
   const ms = Date.now() - start;
   const status = c.res.status;
-  const log = status >= 500 ? logger.error.bind(logger)
-    : status >= 400 ? logger.warn.bind(logger)
-    : logger.info.bind(logger);
-  log({ method: c.req.method, path: c.req.path, status, ms }, `${c.req.method} ${c.req.path} ${status} ${ms}ms`);
+  const log =
+    status >= 500
+      ? logger.error.bind(logger)
+      : status >= 400
+        ? logger.warn.bind(logger)
+        : logger.info.bind(logger);
+  log(
+    { method: c.req.method, path: c.req.path, status, ms },
+    `${c.req.method} ${c.req.path} ${status} ${ms}ms`,
+  );
 });
 
 function withCors(response: Response, origin: string | null): Response {
@@ -50,11 +60,12 @@ app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
     return new Response(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+        "Access-Control-Allow-Origin":
+          origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Vary": "Origin",
+        Vary: "Origin",
       },
     });
   }
@@ -65,7 +76,10 @@ app.on(["GET", "POST", "OPTIONS"], "/api/auth/**", async (c) => {
 
 const pushProcessor = new PushProcessor(dbProvider);
 
-const apiCors = cors({ origin: (o) => ALLOWED_ORIGINS.includes(o) ? o : ALLOWED_ORIGINS[0], credentials: true });
+const apiCors = cors({
+  origin: (o) => (ALLOWED_ORIGINS.includes(o) ? o : ALLOWED_ORIGINS[0]),
+  credentials: true,
+});
 app.use("/api/zero/*", apiCors);
 app.use("/api/check-username", apiCors);
 
@@ -103,9 +117,9 @@ app.post("/api/zero/query", async (c) => {
         return q.fn({ args: args as never, ctx: undefined as never });
       },
       schema,
-      // For unauthenticated connections (guests), return "guest" so zero-cache
-      // matches it against the GUEST_ID used in ZeroProvider on the client.
-      userID: userID ?? "guest",
+      // For unauthenticated connections, pass null. zero-cache compares this
+      // against connection.user.id which is also null when no userID was sent.
+      userID: userID, // null for anonymous — Zero v1.7+ expects null/undefined for logged-out
       request: c.req.raw,
     });
     return c.json(result);
@@ -118,7 +132,8 @@ app.post("/api/zero/query", async (c) => {
 app.get("/api/check-username", async (c) => {
   const username = c.req.query("username");
   if (!username) return c.json({ available: false, error: "username required" }, 400);
-  const rows = await db.select({ id: profiles.id })
+  const rows = await db
+    .select({ id: profiles.id })
     .from(profiles)
     .where(eq(profiles.username, username))
     .limit(1);
