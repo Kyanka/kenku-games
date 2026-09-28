@@ -1,0 +1,19 @@
+[Unit]
+Description=Kenku DB migrations (Drizzle)
+After=network.target postgresql.service
+# If you run your own Postgres (not managed by systemd), remove the line above
+# and adjust After= to whatever ensures Postgres is up.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=kenku
+WorkingDirectory=/opt/kenku/packages/db
+EnvironmentFile=/opt/kenku/.env
+ExecStart=/usr/bin/npx drizzle-kit migrate
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kenku-migrate
+
+[Install]
+WantedBy=multi-user.target

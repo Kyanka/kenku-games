@@ -7,7 +7,7 @@
   },
   "packageManager": "pnpm@11.10.0",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev dev:zero-cache",
     "dev:zero-cache": "dotenv -e .env -- npx zero-cache-dev",
     "build": "turbo run build",
     "lint": "eslint .",

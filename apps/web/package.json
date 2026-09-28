@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@kenku/game-logic": "workspace:*",
     "@kenku/shared-types": "workspace:*",
     "@kenku/zero-schema": "workspace:*",
@@ -19,8 +20,10 @@
     "dotenv": "^17.4.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "react-hook-form": "^7.89.0",
     "react-router-dom": "7.18.1",
-    "xstate": "5.32.4"
+    "xstate": "5.32.4",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.2",

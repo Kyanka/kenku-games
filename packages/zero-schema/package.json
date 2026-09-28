@@ -6,12 +6,13 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "generate": "drizzle-zero generate --format --config drizzle-zero.config.ts --drizzle-kit-config ../db/drizzle.config.ts --output src/schema.gen.ts",
+    "generate": "drizzle-zero generate --force --format --config drizzle-zero.config.ts --drizzle-kit-config ../db/drizzle.config.ts --output src/schema.gen.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@rocicorp/zero": "1.7.0",
-    "@kenku/db": "workspace:*"
+    "@kenku/db": "workspace:*",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "drizzle-zero": "^0.20.0",

@@ -1,56 +1,31 @@
-# kenku-games — Claude rules
+# kenku-games — Claude context hub
 
-## Stack
+This is an **educational pet project**: a collection of mini-games built primarily
+to learn modern web technologies. Read the rules below before doing anything.
 
-- **Monorepo**: pnpm workspaces + Turborepo
-- **Frontend**: React + Vite + React Router + Zero client (`@rocicorp/zero`)
-- **Backend**: Express + Zero push/query endpoints (`@rocicorp/zero/server`)
-- **Sync**: zero-cache (separate process, port 4848)
-- **Database**: PostgreSQL with `wal_level=logical` (required by Zero)
-- **ORM / migrations**: Drizzle ORM + drizzle-kit (`packages/db`)
-- **Zero schema**: auto-generated from Drizzle via `drizzle-zero` (`packages/zero-schema`)
-- **Game logic**: pure functions + XState machines (`packages/game-logic`)
-- **Shared types**: `packages/shared-types`
+## How to work on this project
 
-## Package responsibilities
+**Always plan before acting.**
+For every non-trivial task, produce a detailed step-by-step plan (see
+`.claude/rules/01-project-overview.md`) and wait for approval before executing.
 
-| Package | Role |
-|---|---|
-| `packages/db` | Drizzle schema, migrations, drizzle.config.ts |
-| `packages/zero-schema` | Zero schema (auto-generated), mutators, queries |
-| `packages/shared-types` | Shared TypeScript types (game payloads, etc.) |
-| `packages/game-logic` | Pure game logic, XState machines |
-| `apps/server` | Express server, Zero push/query endpoints, DB client |
-| `apps/web` | React frontend, Zero client |
+## Rules index
 
-## Database rules
+| File | What it covers |
+|------|----------------|
+| [`rules/01-project-overview.md`](rules/01-project-overview.md) | Purpose, learning goals, workflow (plan → review → execute) |
+| [`rules/02-tech-stack.md`](rules/02-tech-stack.md) | Every package, tool and why it was chosen |
+| [`rules/03-local-setup.md`](rules/03-local-setup.md) | Running the project locally and in hybrid mode (local frontend + remote API) |
+| [`rules/04-deployment.md`](rules/04-deployment.md) | Deploying to the VPS with systemd, Caddy, drizzle migrations |
+| [`rules/05-git-workflow.md`](rules/05-git-workflow.md) | Commit conventions, branch names, PR rules |
+| [`rules/06-dev-log.md`](rules/06-dev-log.md) | Research log — solved problems, decisions, what to avoid repeating |
 
-### Schema changes
-All database schema changes go through `packages/db/src/schema.ts`.
-Never modify schema in any other place.
+## Quick reference
 
-After every schema change, run the full sync:
-```bash
-pnpm db:sync
 ```
-This runs in sequence: `db:generate` → `db:migrate` → zero-schema `generate`.
-
-### Migrations
-- Migrations live in `packages/db/drizzle/`
-- Run via `pnpm --filter @kenku/db db:generate` (generate SQL) and `pnpm --filter @kenku/db db:migrate` (apply)
-- Or use `pnpm db:sync` from the root to do everything at once
-
-### Zero schema
-- `packages/zero-schema/src/schema.gen.ts` is auto-generated — never edit manually
-- `packages/zero-schema/drizzle-zero.config.ts` controls which tables/columns are synced to the client
-- When adding a new table, explicitly add it to `drizzle-zero.config.ts` before running `generate`
-
-### DB client
-- The Drizzle client lives in `apps/server/src/db/client.ts`
-- Zero uses its own `pg.Pool` via `zeroNodePg` adapter (in `apps/server/src/db-provider.ts`)
-- These are two separate database connections — Drizzle for custom queries, Zero for sync
-
-### Never
-- Never import Drizzle schema from `apps/server` in other packages — use `@kenku/db`
-- Never edit `schema.gen.ts` by hand
-- Never commit a migration without also committing the updated `schema.gen.ts`
+monorepo root     pnpm install && pnpm dev
+schema change     pnpm db:sync   (generate + migrate + zero-schema generate)
+server build      pnpm --filter @kenku/server build
+deploy            ssh vps "cd /opt/kenku-games && ./deploy/deploy.sh"
+logs              journalctl -u kenku-server -f
+```

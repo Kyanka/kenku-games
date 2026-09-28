@@ -6,5 +6,5 @@ export default defineConfig({
   outDir: "dist",
   splitting: false,
   clean: true,
-  noExternal: [/@kenku\/.*/], // бандлим все @kenku/* пакеты прямо внутрь
+  noExternal: [/@kenku\/.*/],
 });
