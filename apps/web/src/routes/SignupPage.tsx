@@ -3,68 +3,90 @@ import { Github } from "../icons/Github";
 import { Discord } from "../icons/Discord";
 import { Google } from "../icons/Google";
 import { useNavigate, Link } from "react-router-dom";
-import { signUp } from "../lib/auth-client.js";
-import { useState } from "react";
+import { signUp, useSession } from "../lib/auth-client.js";
+import { useEffect } from "react";
+import { SignupSchema, type SignupValues } from "../lib/schemas.js";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+
+async function checkUsernameAvailable(username: string): Promise<boolean> {
+  const res = await fetch(
+    `${API_BASE}/api/check-username?username=${encodeURIComponent(username)}`,
+  );
+  if (!res.ok) return false;
+  const data = await res.json();
+  return data.available === true;
+}
 
 export function SignupPage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsloading] = useState(false);
-  const passwordsDoNotMatch = repeatPassword.length > 0 && password !== repeatPassword;
+  const { data: session } = useSession();
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setIsloading(true);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupValues>({
+    resolver: zodResolver(SignupSchema),
+  });
 
-    const { error } = await signUp.email({ name, email, password });
+  useEffect(() => {
+    if (session) navigate("/", { replace: true });
+  }, [session, navigate]);
 
-    setIsloading(false);
+  async function onSubmit(values: SignupValues) {
+    // Check username availability before creating account
+    const available = await checkUsernameAvailable(values.username);
+    if (!available) {
+      setError("username", { message: "This username is already taken" });
+      return;
+    }
 
+    // Pass username as `name` — auth.ts databaseHooks picks it up to create the profile row
+    const { error } = await signUp.email({
+      name: values.username,
+      email: values.email,
+      password: values.password,
+    });
     if (error) {
-      setError(error.message ?? "Sign up error");
-      return;
+      setError("root", { message: error.message ?? "Sign up failed" });
     }
-    if (password !== repeatPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    navigate("/");
   }
 
   return (
-    <main className="mx-auto flex flex-col p-2 bg-black">
+    <main className="mx-auto flex flex-col p-2 bg-black font-second">
       <header className="mx-auto w-110 flex-col pb-5">
         <img src={logo} alt="logo" />
       </header>
 
       <div className="mx-auto max-w-md">
         <div className="mb-4">
-          <h1 className="uppercase text-green font-display text-lg "> &gt; User authentication</h1>
+          <h1 className="uppercase text-green font-main text-lg "> &gt; User authentication</h1>
           <p className="text-sm text-grey">Access your global save progress and arcade rank.</p>
         </div>
 
-        <form className="gap-2 flex-col flex" onSubmit={handleSubmit}>
-          <label className="uppercase text-grey font-display text-sm" htmlFor="username">
+        <form className="gap-2 flex-col flex" onSubmit={handleSubmit(onSubmit)}>
+          <label className="uppercase text-grey font-main text-sm" htmlFor="username">
             &gt; Username:{" "}
           </label>
-
           <input
-            className="block w-full border border-grey py-2 uppercase text-grey "
+            className={`block w-full border border-grey py-2 placeholder:uppercase text-grey
+            ${errors.username ? "border-pink" : "border-grey "}`}
             placeholder="&gt; pixel_ "
-            id="name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            id="username"
             type="text"
+            autoComplete="username"
+            {...register("username")}
           />
-
-          <label className="uppercase text-grey font-display text-sm " htmlFor="email">
+          {errors.username ? (
+            <p className="text-xs text-pink">{errors.username.message}</p>
+          ) : (
+            <p className="text-xs text-grey">3–20 characters, letters, numbers, underscores</p>
+          )}
+          <label className="uppercase text-grey font-main text-sm " htmlFor="email">
             &gt; Email:
           </label>
           <input
@@ -72,52 +94,42 @@ export function SignupPage() {
             placeholder="&gt; enter email"
             id="email"
             type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            {...register("email")}
           />
-
-          <label className="uppercase text-grey font-display text-sm " htmlFor="password">
+          {errors.email && <p className="text-xs text-red-600">{errors.email.message}</p>}
+          <label className="uppercase text-grey font-main text-sm " htmlFor="password">
             &gt; Password:
           </label>
           <input
-            className="block w-full border border-grey py-2 uppercase text-grey "
+            className="block w-full border border-grey py-2 placeholder:uppercase text-grey "
             placeholder="&gt; enter secure pass"
             id="password"
             type="password"
-            minLength={8}
             autoComplete="new-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password")}
           />
+          {errors.password ? (
+            <p className="text-xs text-pink">{errors.password.message}</p>
+          ) : (
+            <p className="text-xs text-grey">Min 8 characters, at least one number</p>
+          )}
 
-          <label className="uppercase text-grey font-display text-sm" htmlFor="repeat-password">
+          <label className="uppercase text-grey font-main text-sm" htmlFor="confirm-password">
             &gt; Repeat password:
           </label>
           <input
-            className="block w-full border border-grey py-2 uppercase text-grey "
-            placeholder="&gt; enter secure pass"
-
-            id="repeat-password"
+            className="block w-full border border-grey py-2 placeholder:uppercase text-grey"
+            placeholder="> enter secure pass"
+            id="confirm-password"
             type="password"
-            required
-            onChange={(e) => setRepeatPassword(e.target.value)}
-            aria-invalid={passwordsDoNotMatch}
-            aria-describedby={passwordsDoNotMatch ? "password-match-error" : undefined}
+            autoComplete="new-password"
+            {...register("confirmPassword")}
           />
-
-          {passwordsDoNotMatch && (
-            <p
-              id="password-match-error"
-              role="alert"
-              className="mt-2 font-display text-sm uppercase text-pink"
-            >
-              &gt; Passwords do not match
-            </p>
+          {errors.confirmPassword && (
+            <p className="text-xs text-pink">{errors.confirmPassword.message}</p>
           )}
-
-          <p className="uppercase text-violet font-display mt-4 text-xs">or connect with</p>
+          <p className="uppercase text-violet font-main mt-4 text-xs">or connect with</p>
           <div className="flex justify-between w-full gap-2">
             <button className="gap-2 items-center justify-center border px-4 py-2 inline-flex text-blue border-grey ">
               <Discord /> <span className="text-white">discord</span>
@@ -133,27 +145,23 @@ export function SignupPage() {
               <span className="text-white">google</span>
             </button>
           </div>
-
           <div>
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
-            )}
             <button
               type="submit"
-              disabled={isLoading}
-              className=" justify-center uppercase mx-auto flex w-full  py-2 bg-green mt-5 text-center font-display"
+              disabled={isSubmitting}
+              className=" justify-center uppercase mx-auto flex w-full  py-2 bg-green mt-5 text-center font-main"
             >
-              {isLoading ? "Loading..." : "Create account"}
+              {isSubmitting ? "Creating account..." : "Sign up"}
             </button>
           </div>
         </form>
 
-        <div className="flex gap-5">
+        <div className="flex gap-5 text-sm">
           <p className="text-pink">Privacy policy</p>
           <p className="text-violet uppercase">
             {" "}
             Already have an account?
-            <Link to="/login">Log in &gt;</Link>{" "}
+            <Link to="/login"> Log in &gt;</Link>{" "}
           </p>
         </div>
       </div>

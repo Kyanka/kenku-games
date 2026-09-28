@@ -8,7 +8,9 @@ import { SignupSchema, type SignupValues } from "../../lib/schemas.js";
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 
 async function checkUsernameAvailable(username: string): Promise<boolean> {
-  const res = await fetch(`${API_BASE}/api/check-username?username=${encodeURIComponent(username)}`);
+  const res = await fetch(
+    `${API_BASE}/api/check-username?username=${encodeURIComponent(username)}`,
+  );
   if (!res.ok) return false;
   const data = await res.json();
   return data.available === true;
@@ -72,7 +74,9 @@ export function Signup() {
             {errors.username ? (
               <p className="text-xs text-red-600">{errors.username.message}</p>
             ) : (
-              <p className="text-xs text-gray-400">3–20 characters, letters, numbers, underscores</p>
+              <p className="text-xs text-gray-400">
+                3–20 characters, letters, numbers, underscores
+              </p>
             )}
           </div>
 
@@ -87,9 +91,7 @@ export function Signup() {
               {...register("email")}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && (
-              <p className="text-xs text-red-600">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-xs text-red-600">{errors.email.message}</p>}
           </div>
 
           <div className="flex flex-col gap-1">

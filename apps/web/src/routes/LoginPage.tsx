@@ -1,33 +1,39 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import logo from "../images/logo.svg";
 import { Github } from "../icons/Github";
 import { Discord } from "../icons/Discord";
 import { Google } from "../icons/Google";
 import { useNavigate, Link } from "react-router-dom";
-import { signIn } from "../lib/auth-client.js";
+import { signIn, useSession } from "../lib/auth-client.js";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema, type LoginValues } from "../lib/schemas.js";
 
 export function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsloading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { data: session } = useSession();
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setIsloading(true);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(LoginSchema),
+  });
 
-    const { error } = await signIn.email({ email, password });
+  useEffect(() => {
+    if (session) navigate("/", { replace: true });
+  }, [session, navigate]);
 
-    setIsloading(false);
-
+  async function onSubmit(values: LoginValues) {
+    const { error } = await signIn.email({
+      email: values.email,
+      password: values.password,
+    });
     if (error) {
-      setError(error.message ?? "Login error ");
-      return;
+      setError("root", { message: error.message ?? "Login failed" });
     }
-
-    navigate("/");
   }
 
   return (
@@ -38,79 +44,83 @@ export function LoginPage() {
 
       <div className="mx-auto max-w-md">
         <div className="mb-4">
-          <h1 className="uppercase text-green font-display text-lg text-nowrap ">
+          <h1 className="uppercase text-green font-main text-lg text-nowrap ">
             {" "}
             &gt; User authentication
           </h1>
-          <p className="text-sm text-grey">Access your global save progress and arcade rank.</p>
+          <p className="font-second text-sm text-grey">
+            Access your global save progress and arcade rank.
+          </p>
         </div>
 
-        <form className="gap-2 flex-col flex" onSubmit={handleSubmit}>
-          <label className="uppercase text-grey font-display text-sm" htmlFor="email">
+        <form className="gap-2 flex-col flex" onSubmit={handleSubmit(onSubmit)}>
+          <label className="uppercase text-grey font-main text-sm" htmlFor="email">
             &gt; Email:{" "}
           </label>
 
           <input
-            className="block w-full border border-grey py-2 placeholder:uppercase text-grey not-placeholder-shown:bg-grey not-placeholder-shown:text-black  "
+            className="block w-full border border-grey py-2 placeholder:uppercase text-grey font-second "
             placeholder="&gt; pixel_ "
             id="email"
             type="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            {...register("email")}
           />
-
+          {errors.email && <p className="text-xs text-pink">{errors.email.message}</p>}
           <label
             className="
-                        uppercase text-grey font-display text-sm "
+                        uppercase text-grey font-main text-sm "
             htmlFor="password"
           >
             &gt; Password:
           </label>
 
           <input
-            className="block w-full border border-grey py-2 placeholder:uppercase text-grey "
-            placeholder="&gt; enter secure pass"
+            className="font-second block w-full border border-grey py-2 placeholder:uppercase text-grey "
             id="password"
+            placeholder="&gt; enter secure pass"
             type="password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            {...register("password")}
           />
-
-          <p className="uppercase text-violet font-display mt-4 text-xs">or connect with</p>
+          {errors.password && <p className="text-xs text-pink">{errors.password.message}</p>}
+          <p className="uppercase text-violet font-main mt-4 text-xs">or connect with</p>
 
           <div className="flex justify-between w-full gap-2">
-            <button className="gap-2 items-center justify-center border  px-4 py-2 inline-flex text-blue border-grey ">
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-blue border-grey ">
               <Discord /> <span className="text-white">discord</span>
             </button>
 
-            <button className="gap-2 items-center justify-center border  px-4 py-2 inline-flex border-grey text-white">
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex border-grey text-white">
               <Github /> <span className="text-white">github</span>
             </button>
 
-            <button className=" gap-2 items-center justify-center border  px-4 py-2 inline-flex text-green border-grey ">
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-green border-grey ">
               <Google /> <span className="text-white">google</span>
             </button>
           </div>
 
           <div>
+            {errors.root && (
+              <p className="text-sm text-pink bg-red-50 rounded-lg px-3 py-2">
+                {errors.root.message}
+              </p>
+            )}
             <button
               type="submit"
-              disabled={isLoading}
-              className=" justify-center uppercase mx-auto flex w-full  py-2 bg-green mt-5 text-center font-display"
+              disabled={isSubmitting}
+              className=" justify-center uppercase mx-auto flex w-full  py-2 bg-green mt-5 text-center font-main"
             >
-              {isLoading ? "Loading..." : "Sign in"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
 
-        {error && <p className="text-sm text-pink rounded-lg px-3 py-2 ">{error}</p>}
-        <div className="flex gap-5 mb-50">
+        <div className="flex gap-5 mb-50 font-second ">
           <p className="text-pink">Forgot password</p>
           <p className="text-violet uppercase">
             New player?
-            <Link to="/signup">Create account &gt;</Link>
+            <Link to="/signup"> Create account &gt;</Link>
           </p>
         </div>
       </div>
