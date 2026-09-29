@@ -84,7 +84,7 @@ export function SignupPage() {
           {errors.username ? (
             <p className="text-xs text-pink">{errors.username.message}</p>
           ) : (
-            <p className="text-xs text-grey">3–20 characters, letters, numbers, underscores</p>
+            <p className="text-violet text-xs ">3–20 characters, letters, numbers, underscores</p>
           )}
           <label className="uppercase text-grey font-main text-sm " htmlFor="email">
             &gt; Email:
@@ -112,7 +112,7 @@ export function SignupPage() {
           {errors.password ? (
             <p className="text-xs text-pink">{errors.password.message}</p>
           ) : (
-            <p className="text-xs text-grey">Min 8 characters, at least one number</p>
+            <p className="text-xs text-violet">Min 8 characters, at least one number</p>
           )}
 
           <label className="uppercase text-grey font-main text-sm" htmlFor="confirm-password">

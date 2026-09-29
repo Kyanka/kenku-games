@@ -9,6 +9,8 @@ import { Profile } from "./routes/(beta)/Profile.js";
 import { AuthGuard } from "./components/AuthGuard.js";
 import { LoginPage } from "./routes/LoginPage.js";
 import { SignupPage } from "./routes/SignupPage.js";
+import { ProfilePage } from "./routes/ProfilePage.js";
+import { MainPage } from "./routes/MainPage.js";
 
 export function App() {
   return (
@@ -19,7 +21,7 @@ export function App() {
         path="/"
         element={
           <AuthGuard>
-            <GameSelect />
+            <MainPage />
           </AuthGuard>
         }
       />
@@ -27,7 +29,7 @@ export function App() {
         path="/profile"
         element={
           <AuthGuard>
-            <Profile />
+            <ProfilePage />
           </AuthGuard>
         }
       />
