@@ -1,6 +1,6 @@
 import logo from "../images/logo.svg";
 import { useNavigate } from "react-router-dom";
-import { signOut, useSession } from "../lib/auth-client.js";
+import { signOut } from "../lib/auth-client.js";
 
 export function Navbar() {
   const navigate = useNavigate();
