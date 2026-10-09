@@ -1,1 +1,154 @@
 @import "tailwindcss";
+
+/* ============ THEMES ============
+   Hex colors live ONLY here. Markup uses role classes:
+   bg-surface, text-fg, text-muted, border-line, text-accent / bg-accent,
+   text-on-accent, text-secondary, text-danger, text-info. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #05060d; /* page background */
+  --fg: #f7f2e8; /* main text, focused label/input */
+  --muted: #a09da5; /* secondary text, labels, input text */
+  --line: #a09da5; /* borders */
+  --accent: #c6ff4a; /* primary: headings, buttons, focus ring */
+  --on-accent: #05060d; /* text on bg-accent */
+  --secondary: #a990ff; /* links, caret */
+  --danger: #ff8eaf; /* errors */
+  --info: #7aa2f9;
+}
+
+/* TODO: light theme. Enable with <html data-theme="light">.
+[data-theme="light"] {
+  color-scheme: light;
+  --surface: ;
+  --fg: ;
+  --muted: ;
+  --line: ;
+  --accent: ;
+  --on-accent: ;
+  --secondary: ;
+  --danger: ;
+  --info: ;
+}
+*/
+
+/* inline: utilities emit var(--surface) etc. directly, so switching
+   data-theme repaints everything without rebuilding CSS */
+@theme inline {
+  --color-*: initial;
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-secondary: var(--secondary);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+}
+
+@theme {
+  --font-main: "Press Start 2P", monospace;
+  --font-second: "Space Mono", monospace;
+}
+
+@theme inline {
+  --text-*: initial;
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
+}
+
+/* Press Start 2P */
+@utility font-main {
+  font-family: "Press Start 2P", monospace;
+  line-height: 1.5;
+  --fs-xs: 0.5rem; /* 8  */
+  --fs-sm: 1rem; /* 16 */
+  --fs-base: 1.5rem; /* 24 */
+  --fs-lg: 2rem; /* 32 */
+  --fs-xl: 2.5rem; /* 40 */
+  --fs-2xl: 3rem; /* 48 */
+  --fs-3xl: 4rem; /* 64 */
+}
+
+/* Space Mono */
+@utility font-second {
+  font-family: "Space Mono", monospace;
+  line-height: 1.6;
+  --fs-xs: 0.75rem; /* 12 */
+  --fs-sm: 0.875rem; /* 14 */
+  --fs-base: 1rem; /* 16 */
+  --fs-lg: 1.25rem; /* 20 */
+  --fs-xl: 1.5rem; /* 24 */
+  --fs-2xl: 2rem; /* 32 */
+  --fs-3xl: 2.5rem; /* 40 */
+}
+
+@layer base {
+  /* FONTS */
+  body {
+    @apply font-second bg-surface text-fg;
+    min-height: 100vh;
+  }
+  /* (Press Start 2P) */
+  h1 {
+    @apply font-main text-lg md:text-xl lg:text-2xl; /* 32 → 40 → 48 */
+  }
+  h2 {
+    @apply font-main text-base md:text-lg lg:text-xl; /* 24 → 32 → 40 */
+  }
+  h3 {
+    @apply font-main text-sm; /* 16 */
+  }
+  /* (Space Mono) */
+  p {
+    @apply font-second text-sm md:text-base p-0; /* 14 → 16 */
+  }
+
+  /* INPUTS */
+  input,
+  textarea {
+    caret-color: var(--secondary);
+    caret-shape: underscore;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    /* outline, not border-color: utilities like border-line would override base */
+    outline: 1px solid var(--accent);
+    outline-offset: -1px;
+  }
+
+  /* Autofill inputs*/
+  input:autofill,
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--muted); /* text color */
+    -webkit-box-shadow: 0 0 0 1000px var(--surface) inset; /* background */
+    box-shadow: 0 0 0 1000px var(--surface) inset;
+    caret-color: var(--accent);
+    transition: background-color 9999s ease-out; /* Chrome background override */
+    @apply font-second;
+  }
+}
+
+/* Focused field: label + input text switch to fg color (label goes right before input).
+   In utilities layer so it beats text-muted on label/input. */
+@layer utilities {
+  label:has(+ input:focus-visible, + textarea:focus-visible) {
+    color: var(--fg);
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    color: var(--fg);
+  }
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--fg);
+  }
+}

@@ -17,6 +17,7 @@
     "@rocicorp/zero": "1.7.0",
     "@xstate/react": "6.1.0",
     "better-auth": "^1.7.3",
+    "dotenv": "^17.4.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-hook-form": "^7.89.0",

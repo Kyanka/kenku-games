@@ -2,12 +2,12 @@
 
 ## Branches
 
-| Branch | Purpose |
-|--------|---------|
-| `main` | Production-ready code; always deployable |
-| `feature/<name>` | New features, e.g. `feature/snake-game` |
-| `fix/<name>` | Bug fixes, e.g. `fix/zero-auth-mismatch` |
-| `chore/<name>` | Infra, tooling, deps — no user-facing change |
+| Branch           | Purpose                                      |
+| ---------------- | -------------------------------------------- |
+| `main`           | Production-ready code; always deployable     |
+| `feature/<name>` | New features, e.g. `feature/snake-game`      |
+| `fix/<name>`     | Bug fixes, e.g. `fix/zero-auth-mismatch`     |
+| `chore/<name>`   | Infra, tooling, deps — no user-facing change |
 
 **Never commit directly to `main`** for anything non-trivial. Open a PR, get a review (or self-review), then merge.
 
@@ -23,18 +23,32 @@
 
 ### Types
 
-| Type | When to use |
-|------|------------|
-| `feat` | New user-facing feature |
-| `fix` | Bug fix |
-| `core` | Architecture, refactor, internal restructure (no new feature, no bug) |
-| `chore` | Config, deps, build scripts, CI |
-| `docs` | Documentation only |
-| `test` | Tests only |
+| Type    | When to use                                                           |
+| ------- | --------------------------------------------------------------------- |
+| `feat`  | New user-facing feature                                               |
+| `fix`   | Bug fix                                                               |
+| `core`  | Architecture, refactor, internal restructure (no new feature, no bug) |
+| `chore` | Config, deps, build scripts, CI                                       |
+| `docs`  | Documentation only                                                    |
+| `test`  | Tests only                                                            |
 
 ### Scope (optional but encouraged)
 
 Use the package or area: `web`, `server`, `db`, `zero`, `deploy`, `auth`.
+
+### Pre-commit hook
+
+`.husky/pre-commit` runs **lint-staged** (`lint-staged.config.js`): ESLint `--fix` and
+Prettier on the staged files only. Same scheme as `pnpm fix`, which covers the whole repo.
+
+- Hook failed → fix the reported errors, re-stage, commit again.
+- **Never** bypass it with `--no-verify`.
+- Hooks are installed by `pnpm install` (the `prepare` script runs `husky`).
+
+### Dev-log
+
+Every commit also adds its line to [`../notes/dev-log.md`](../notes/dev-log.md) in the
+**same commit** — see `06-dev-log.md`. `/git-update` does this automatically.
 
 ### Examples
 

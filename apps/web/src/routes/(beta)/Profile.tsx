@@ -100,7 +100,7 @@ export function Profile() {
         <button
           type="submit"
           disabled={isSubmitting || isLoading}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-fg hover:bg-slate-700 disabled:opacity-50"
         >
           {isSubmitting ? "Saving..." : "Save changes"}
         </button>
