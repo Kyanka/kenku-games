@@ -14,27 +14,24 @@ export const UpdateProfileSchema = zod.object({
 
 export const mutators = defineMutators({
   profile: {
-    update: defineMutator(
-      UpdateProfileSchema,
-      async ({ tx, args }) => {
-        if (!args) return;
-        const { id, username, avatarUrl } = args;
+    update: defineMutator(UpdateProfileSchema, async ({ tx, args }) => {
+      if (!args) return;
+      const { id, username, avatarUrl } = args;
 
-        if (username !== undefined) {
-          // upsert so a missing profile row is created automatically
-          await tx.mutate.profiles.upsert({
-            id,
-            username,
-            ...(avatarUrl !== undefined && { avatarUrl }),
-          });
-        } else {
-          // avatar-only update — row must already exist
-          await tx.mutate.profiles.update({
-            id,
-            ...(avatarUrl !== undefined && { avatarUrl }),
-          });
-        }
-      },
-    ),
+      if (username !== undefined) {
+        // upsert so a missing profile row is created automatically
+        await tx.mutate.profiles.upsert({
+          id,
+          username,
+          ...(avatarUrl !== undefined && { avatarUrl }),
+        });
+      } else {
+        // avatar-only update — row must already exist
+        await tx.mutate.profiles.update({
+          id,
+          ...(avatarUrl !== undefined && { avatarUrl }),
+        });
+      }
+    }),
   },
 });

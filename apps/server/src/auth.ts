@@ -37,7 +37,8 @@ export const auth = betterAuth({
           // newUser.name carries the username chosen at signup (transport mechanism)
           const username = newUser.name;
           if (!username) return { data: newUser };
-          const existing = await db.select({ id: profiles.id })
+          const existing = await db
+            .select({ id: profiles.id })
             .from(profiles)
             .where(eq(profiles.username, username))
             .limit(1);

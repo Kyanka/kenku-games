@@ -13,5 +13,5 @@ export default drizzleZeroConfig(
         createdAt: true,
       },
     },
-  }
+  },
 );

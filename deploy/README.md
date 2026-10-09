@@ -97,6 +97,7 @@ ssh-keygen -t ed25519 -C "github-actions-kenku" -f ~/.ssh/kenku_deploy -N ""
 ```
 
 Получаем два файла:
+
 - `kenku_deploy` — **приватный ключ** → идёт в GitHub Secret
 - `kenku_deploy.pub` — **публичный ключ** → добавляется на VPS
 
@@ -112,12 +113,12 @@ cat ~/.ssh/kenku_deploy.pub | ssh kenku@<VPS_IP> "cat >> ~/.ssh/authorized_keys"
 
 Репозиторий → **Settings → Secrets and variables → Actions → New repository secret**:
 
-| Secret | Значение |
-|--------|---------|
-| `VPS_HOST` | IP или домен (`185.x.x.x` или `games.example.com`) |
-| `VPS_USER` | `kenku` (или `root` если деплоишь от root) |
-| `VPS_SSH_KEY` | Содержимое файла `~/.ssh/kenku_deploy` (весь текст включая `-----BEGIN...`) |
-| `VPS_SSH_PORT` | `22` (опционально, если порт нестандартный) |
+| Secret         | Значение                                                                    |
+| -------------- | --------------------------------------------------------------------------- |
+| `VPS_HOST`     | IP или домен (`185.x.x.x` или `games.example.com`)                          |
+| `VPS_USER`     | `kenku` (или `root` если деплоишь от root)                                  |
+| `VPS_SSH_KEY`  | Содержимое файла `~/.ssh/kenku_deploy` (весь текст включая `-----BEGIN...`) |
+| `VPS_SSH_PORT` | `22` (опционально, если порт нестандартный)                                 |
 
 ### 4. Разрешить kenku запускать systemctl без пароля
 

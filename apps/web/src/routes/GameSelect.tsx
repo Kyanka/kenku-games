@@ -35,9 +35,7 @@ export function GameSelect() {
           </button>
         </div>
       </div>
-      {session?.user && (
-        <p className="text-sm text-slate-500">{session.user.email}</p>
-      )}
+      {session?.user && <p className="text-sm text-slate-500">{session.user.email}</p>}
       <p className="text-slate-600">Choose a game</p>
       <div className="flex flex-col gap-3">
         {GAMES.map((game) => (

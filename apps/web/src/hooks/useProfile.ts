@@ -15,10 +15,9 @@ export function useProfile() {
   // Only subscribe when we have a real user ID — querying with "" creates a
   // useless subscription that zero-cache tracks, and switching it to the real
   // ID later causes a new subscription, breaking real-time updates.
-  const [profileRows, details] = useQuery(
-    queries.profileByUser({ userId: userID ?? "" }),
-    { enabled: isRealUser },
-  );
+  const [profileRows, details] = useQuery(queries.profileByUser({ userId: userID ?? "" }), {
+    enabled: isRealUser,
+  });
   const profile = profileRows[0] ?? null;
 
   // True while zero-cache hasn't returned the first snapshot yet.

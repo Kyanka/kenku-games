@@ -4,27 +4,27 @@ Educational project with mini games
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Monorepo | pnpm workspaces + Turborepo |
-| Frontend | React + Vite + React Router |
-| Sync | Zero (`@rocicorp/zero`) + zero-cache |
-| Backend | Express (Node.js) |
-| Database | PostgreSQL with `wal_level=logical` |
-| ORM / migrations | Drizzle ORM + drizzle-kit |
-| Game logic | Pure functions + XState |
-| Language | TypeScript (strict) |
+| Layer            | Technology                           |
+| ---------------- | ------------------------------------ |
+| Monorepo         | pnpm workspaces + Turborepo          |
+| Frontend         | React + Vite + React Router          |
+| Sync             | Zero (`@rocicorp/zero`) + zero-cache |
+| Backend          | Express (Node.js)                    |
+| Database         | PostgreSQL with `wal_level=logical`  |
+| ORM / migrations | Drizzle ORM + drizzle-kit            |
+| Game logic       | Pure functions + XState              |
+| Language         | TypeScript (strict)                  |
 
 ## Packages
 
-| Package | Role |
-|---|---|
-| `packages/db` | Drizzle schema, migrations, drizzle.config.ts |
-| `packages/zero-schema` | Zero schema (auto-generated), mutators, queries |
-| `packages/shared-types` | Shared TypeScript types |
-| `packages/game-logic` | Pure game logic, XState machines |
-| `apps/server` | Express + Zero endpoints + DB client |
-| `apps/web` | React frontend + Zero client |
+| Package                 | Role                                            |
+| ----------------------- | ----------------------------------------------- |
+| `packages/db`           | Drizzle schema, migrations, drizzle.config.ts   |
+| `packages/zero-schema`  | Zero schema (auto-generated), mutators, queries |
+| `packages/shared-types` | Shared TypeScript types                         |
+| `packages/game-logic`   | Pure game logic, XState machines                |
+| `apps/server`           | Express + Zero endpoints + DB client            |
+| `apps/web`              | React frontend + Zero client                    |
 
 ## Requirements
 
@@ -100,10 +100,10 @@ pnpm dev                        # web + server via Turborepo
 
 ## Other commands
 
-| Command | What it does |
-|---|---|
-| `pnpm db:sync` | Generate migration + apply + regenerate Zero schema |
-| `pnpm typecheck` | `tsc --noEmit` across all packages |
-| `pnpm lint` | ESLint across the whole repo |
-| `pnpm test` | vitest (`game-logic` only for now) |
-| `pnpm format` / `format:check` | Prettier |
+| Command                        | What it does                                        |
+| ------------------------------ | --------------------------------------------------- |
+| `pnpm db:sync`                 | Generate migration + apply + regenerate Zero schema |
+| `pnpm typecheck`               | `tsc --noEmit` across all packages                  |
+| `pnpm lint`                    | ESLint across the whole repo                        |
+| `pnpm test`                    | vitest (`game-logic` only for now)                  |
+| `pnpm format` / `format:check` | Prettier                                            |

@@ -9,6 +9,7 @@ per-commit change log. How and when to read/update it: [`../rules/06-dev-log.md`
 
 <!-- Newest first. One line per commit: YYYY-MM-DD · type(scope): summary — why -->
 
+- 2026-10-09 · chore: format codebase with prettier + eslint --fix — one-time baseline so later diffs show only real changes
 - 2026-10-09 · feat(web): theme tokens, per-font type scale, restyled auth forms + lint tooling — groundwork for a light theme, one visual system for auth forms, ESLint + Prettier on every commit (husky + lint-staged, `pnpm check` / `pnpm fix`), dev-log moved to `notes/` with per-commit rule, `/git-update` and `/resolve-dev-log` skills, `merge=union` for the dev-log
 
 ---

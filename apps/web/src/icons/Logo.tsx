@@ -1,11 +1,8 @@
-import type { SVGProps } from 'react';
+import type { SVGProps } from "react";
 
 type KenkuLogoProps = SVGProps<SVGSVGElement>;
 
-export function Logo({
-  className,
-  ...props
-}: KenkuLogoProps) {
+export function Logo({ className, ...props }: KenkuLogoProps) {
   return (
     <svg
       viewBox="0 0 1540 550"
@@ -14,7 +11,6 @@ export function Logo({
       className={className}
       {...props}
     >
-
       <g id="K">
         <polygon
           fill="#FFFFFF"

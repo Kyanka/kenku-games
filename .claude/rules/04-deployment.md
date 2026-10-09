@@ -119,17 +119,17 @@ systemctl restart kenku-server kenku-zero-cache
 
 ## Environment variables (`.env` on the VPS)
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `BETTER_AUTH_SECRET` | Auth session signing key |
-| `ZERO_AUTH_SECRET` | JWT secret for Zero auth tokens |
-| `ZERO_UPSTREAM_DB` | Postgres URL for zero-cache |
-| `ZERO_QUERY_URL` | `http://localhost:3000/api/zero/query` |
-| `ZERO_CVR_DB_URL` | Postgres URL for CVR store |
-| `ZERO_CHANGE_DB_URL` | Postgres URL for change log |
-| `NODE_ENV` | `production` |
-| `PORT` | `3000` (Hono server) |
+| Variable             | Purpose                                |
+| -------------------- | -------------------------------------- |
+| `DATABASE_URL`       | PostgreSQL connection string           |
+| `BETTER_AUTH_SECRET` | Auth session signing key               |
+| `ZERO_AUTH_SECRET`   | JWT secret for Zero auth tokens        |
+| `ZERO_UPSTREAM_DB`   | Postgres URL for zero-cache            |
+| `ZERO_QUERY_URL`     | `http://localhost:3000/api/zero/query` |
+| `ZERO_CVR_DB_URL`    | Postgres URL for CVR store             |
+| `ZERO_CHANGE_DB_URL` | Postgres URL for change log            |
+| `NODE_ENV`           | `production`                           |
+| `PORT`               | `3000` (Hono server)                   |
 
 ---
 
@@ -151,12 +151,12 @@ deploy.sh: pull → install → build → migrate → restart → healthcheck
 
 ### Необходимые GitHub Secrets
 
-| Secret | Что содержит |
-|--------|-------------|
-| `VPS_HOST` | IP или домен VPS |
-| `VPS_USER` | SSH-пользователь (`kenku`) |
-| `VPS_SSH_KEY` | Приватный ed25519 ключ (без passphrase) |
-| `VPS_SSH_PORT` | SSH-порт (обычно `22`) |
+| Secret         | Что содержит                            |
+| -------------- | --------------------------------------- |
+| `VPS_HOST`     | IP или домен VPS                        |
+| `VPS_USER`     | SSH-пользователь (`kenku`)              |
+| `VPS_SSH_KEY`  | Приватный ed25519 ключ (без passphrase) |
+| `VPS_SSH_PORT` | SSH-порт (обычно `22`)                  |
 
 ### Требования на VPS
 

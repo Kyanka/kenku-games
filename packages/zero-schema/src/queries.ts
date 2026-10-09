@@ -17,8 +17,7 @@ export const queries = defineQueries({
    * Returns the profile row for the given userId.
    * Profiles are public — any authenticated client can read any profile.
    */
-  profileByUser: defineQuery(
-    z.object({ userId: z.string() }),
-    ({ args }) => builder.profiles.where("id", args.userId),
+  profileByUser: defineQuery(z.object({ userId: z.string() }), ({ args }) =>
+    builder.profiles.where("id", args.userId),
   ),
 });

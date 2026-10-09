@@ -103,10 +103,10 @@ pnpm db:sync
 
 ## Common issues
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| `ProtocolError: Connection userID does not match` | `auth` prop in ZeroProvider is wrong | See `rules/02-tech-stack.md` — Zero auth wiring |
-| `No rows will be returned` warning from zero-cache | Using deprecated `definePermissions` | Switch to `defineQuery` / `defineQueries` |
-| zero-cache fails to start | Postgres lacks REPLICATION rights | `ALTER USER kenku WITH REPLICATION SUPERUSER;` |
-| Bearer token not sent | `VITE_API_URL` points to wrong origin | Check `.env` and restart Vite |
-| `Loading profile…` never resolves | Zero connection failed silently | Check browser console for ProtocolError |
+| Symptom                                            | Cause                                 | Fix                                             |
+| -------------------------------------------------- | ------------------------------------- | ----------------------------------------------- |
+| `ProtocolError: Connection userID does not match`  | `auth` prop in ZeroProvider is wrong  | See `rules/02-tech-stack.md` — Zero auth wiring |
+| `No rows will be returned` warning from zero-cache | Using deprecated `definePermissions`  | Switch to `defineQuery` / `defineQueries`       |
+| zero-cache fails to start                          | Postgres lacks REPLICATION rights     | `ALTER USER kenku WITH REPLICATION SUPERUSER;`  |
+| Bearer token not sent                              | `VITE_API_URL` points to wrong origin | Check `.env` and restart Vite                   |
+| `Loading profile…` never resolves                  | Zero connection failed silently       | Check browser console for ProtocolError         |

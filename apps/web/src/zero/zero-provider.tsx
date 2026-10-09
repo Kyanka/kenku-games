@@ -14,9 +14,7 @@ export function KenkuZeroProvider({ children }: { children: ReactNode }) {
   // are silently dropped by JSON.stringify, so a function auth never reaches
   // zero-cache. Read the token at render time; useSession() re-renders on
   // login/logout, so the value is always fresh.
-  const auth = userID
-    ? (localStorage.getItem("bearer_token") ?? undefined)
-    : undefined;
+  const auth = userID ? (localStorage.getItem("bearer_token") ?? undefined) : undefined;
 
   return (
     <ZeroProvider
