@@ -3,8 +3,6 @@ import { GameSelect } from "./routes/GameSelect.js";
 import { BattleshipPlaceholder } from "./routes/BattleshipPlaceholder.js";
 
 import { DicePlaceholder } from "./routes/DicePlaceholder.js";
-import { Login } from "./routes/(beta)/Login.js";
-import { Signup } from "./routes/(beta)/Signup.js";
 import { Profile } from "./routes/(beta)/Profile.js";
 import { AuthGuard } from "./components/AuthGuard.js";
 import { LoginPage } from "./routes/LoginPage.js";
