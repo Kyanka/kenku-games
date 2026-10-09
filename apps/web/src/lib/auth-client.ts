@@ -1,7 +1,8 @@
 import { createAuthClient } from "better-auth/react";
+import { API_BASE } from "./api.js";
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_API_URL as string,
+  baseURL: API_BASE,
   fetchOptions: {
     onSuccess: (ctx) => {
       const token = ctx.response.headers.get("set-auth-token");

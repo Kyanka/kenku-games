@@ -1,0 +1,3 @@
+# Dev-log: append-only file edited by everyone. On merge/rebase keep lines from both sides
+# instead of raising a conflict. Run /resolve-dev-log afterwards to dedupe and re-sort.
+.claude/notes/dev-log.md merge=union

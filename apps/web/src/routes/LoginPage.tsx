@@ -37,90 +37,83 @@ export function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex flex-col p-2 bg-black justify-center ">
-      <header className="mx-auto w-110 flex-col pb-5">
+    <main className="flex flex-col items-center p-2 bg-surface">
+      <header className="w-full sm:w-110 flex-col sm:pb-5">
         <img src={logo} alt="logo" />
       </header>
 
-      <div className="mx-auto max-w-md">
+      <div className="w-full sm:max-w-md flex flex-col gap-2 p-2 sm:p-0">
         <div className="mb-4">
-          <h1 className="uppercase text-green font-main text-lg text-nowrap ">
-            {" "}
-            &gt; User authentication
-          </h1>
-          <p className="font-second text-sm text-grey">
+          <h3 className="uppercase text-accent font-main text-nowrap">&gt; User authentication</h3>
+          <p className="font-second text-sm text-muted">
             Access your global save progress and arcade rank.
           </p>
         </div>
 
         <form className="gap-2 flex-col flex" onSubmit={handleSubmit(onSubmit)}>
-          <label className="uppercase text-grey font-main text-sm" htmlFor="email">
+          <label className="uppercase text-muted font-main" htmlFor="email">
             &gt; Email:{" "}
           </label>
 
           <input
-            className="block w-full border border-grey py-2 placeholder:uppercase text-grey font-second "
+            className="block w-full border border-line p-2 placeholder:uppercase text-muted font-second "
             placeholder="&gt; pixel_ "
             id="email"
             type="email"
             autoComplete="email"
             {...register("email")}
           />
-          {errors.email && <p className="text-xs text-pink">{errors.email.message}</p>}
-          <label
-            className="
-                        uppercase text-grey font-main text-sm "
-            htmlFor="password"
-          >
+          {errors.email && <p className="text-danger">{errors.email.message}</p>}
+          <label className="uppercase text-muted font-main" htmlFor="password">
             &gt; Password:
           </label>
 
           <input
-            className="font-second block w-full border border-grey py-2 placeholder:uppercase text-grey "
+            className="font-second block w-full border border-line p-2 placeholder:uppercase text-muted "
             id="password"
             placeholder="&gt; enter secure pass"
             type="password"
             autoComplete="current-password"
             {...register("password")}
           />
-          {errors.password && <p className="text-xs text-pink">{errors.password.message}</p>}
-          <p className="uppercase text-violet font-main mt-4 text-xs">or connect with</p>
+          {errors.password && <span className="text-danger">{errors.password.message}</span>}
+          <span className="uppercase text-secondary font-main mt-4">or connect with</span>
 
-          <div className="flex justify-between w-full gap-2">
-            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-blue border-grey ">
-              <Discord /> <span className="text-white">discord</span>
+          <div className="flex sm:justify-between w-full gap-2">
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-info border-line ">
+              <Discord /> <span className="text-fg uppercase hidden sm:block">discord</span>
             </button>
 
-            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex border-grey text-white">
-              <Github /> <span className="text-white">github</span>
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex border-line text-fg">
+              <Github /> <span className="text-fg uppercase hidden sm:block">github</span>
             </button>
 
-            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-green border-grey ">
-              <Google /> <span className="text-white">google</span>
+            <button className="font-second gap-2 items-center justify-center border  px-4 py-2 inline-flex text-accent border-line ">
+              <Google /> <span className="text-fg uppercase hidden sm:block">google</span>
             </button>
           </div>
 
           <div>
             {errors.root && (
-              <p className="text-sm text-pink bg-red-50 rounded-lg px-3 py-2">
-                {errors.root.message}
-              </p>
+              <span className="text-danger bg-red-50 rounded-lg py-2">{errors.root.message}</span>
             )}
             <button
               type="submit"
               disabled={isSubmitting}
-              className=" justify-center uppercase mx-auto flex w-full  py-2 bg-green mt-5 text-center font-main"
+              className="justify-center uppercase flex w-full py-2 bg-accent text-on-accent mt-5 text-center font-main"
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
 
-        <div className="flex gap-5 mb-50 font-second ">
-          <p className="text-pink">Forgot password</p>
-          <p className="text-violet uppercase">
-            New player?
-            <Link to="/signup"> Create account &gt;</Link>
+        <div className="flex gap-1 sm:gap-5 mb-50 font-second flex-col-reverse sm:flex-row">
+          <p className="text-danger">Forgot password</p>
+          <p className="text-secondary uppercase">
+            New player?{" "}
+            <Link to="/signup" className="underline">
+              Create account &gt;
+            </Link>
           </p>
         </div>
       </div>
